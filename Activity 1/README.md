@@ -1,2 +1,4 @@
 # Activity 1 - Project Idea Selection & Introduction Vlog
-testing
+
+
+[Vlog 1- Project Idea Selection & Introduction](https://youtu.be/5LqXDVvpI1g)
