@@ -12,5 +12,8 @@ The goal of this project is to explore the Agile/Scrum process through the creat
 
 [Activity 1](Activity%201/) introduced our team's project concept, though a quick vlog discussing the project background, reasoning, impact, who the project's audience is, and what technologies would be used. The [Project Board](https://github.com/orgs/teamcrusher/projects/1) is publicly accessible. 
 
+### Activity 2
+The [Project Board](https://github.com/orgs/teamcrusher/projects/3) is publicly accessible.
+
 ## Software license
 [Creative Commons Share & Share Alike (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
