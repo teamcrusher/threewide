@@ -1,0 +1,16 @@
+
+| **BUSINESSCASE** |       |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Proposed Project** | Project Threewide is an interactive Tetris education platform for new and experienced Tetris players designed to make it easier to practice and learn Tetris techniques |
+| **Date Produced** | Oct 8th, 2020 |
+| **Background** | Modern Tetris is a niche but passionate community who craves to take the game to it's absolute limits. The current platforms that exist will either provide documented knowledge such as four.lol and the harddrop forums, or they allow users to play the game like tetr.io, jstris, or fourtris |
+| **Business Need/ Opportunity** | Users need an easier way to practice strategies from wikis since it's difficult to set up situations to properly practice them. The wikis provide theory, but there is nowhere for the users to apply them. The best the users can do is attempt to replicate situations where they can apply inside the Tetris client, but this is difficult to do and almost impossible for beginners. |
+| **Options** | |
+| **1** | Create a react app which sets up situations for users to practice methods like Tspins, openings, perfect clears, or down stacking. |
+| **2** | Create an app in Next.js that contains the knowledge in a wiki which can be modified by the community along with an embedded Tetris game. |
+| **3** | Create a wiki with a node and express/ mongo backend with a en embedded Tetris game |
+| **Cost-Benefit Analysis** | |
+| **1** | Relatively simple to set up. Requires board and piece data of situations to practice on. Will be completely client side rendered. Will not provide any resources for users to learn the theory. |
+| **2** | None of our members are familiar with Next.js. Will provide a more seamless integration with the app and wiki content. Requires data from Tetris experts for the wikis. Will be server side rendered for search engine optimization. |
+| **3** | Our members are familiar with the technology.  Requires data from Tetris experts for the wikis. The integration with the React app wont be straightforward. Wiki will require a way to generate Tetris SVGs from markdown.|
+| **Recommendation** |  Create a React app as the first MVP. Then it can be used in the node/ express wiki which can use the same app embedded into it which will be the next MVP and the MMP. |
