@@ -8,7 +8,7 @@
 |          Benjamin Hajdukiewicz         | Scrum Master             | 1. Ensure the team member understand the project requirements.                                                                                      |
 |                                        |                          | 2.Ensure that the team follows all necessary Scrum practices to achieve the end goal.                                                               |
 |                                        |                          | 3. Ensure that everyone in the team is updated with the latest information regarding the project and maintain proper communication within the team. |
-|           Daniil Aleshechkin           | Lead Developer           | 1.                                                                                                                                                  |
+|           Daniil Aleshechkin           | Lead Developer           | 1. Help scrum master to make architectural level decisions  |
 |               Tirth Patel              | Full stack web developer | 1.  Work with  team members and scrum master to design and develop Threewide platform  
 |     |                          | 2. Design client-side and server-side architecture for Threewide|
 |||3. Develop a strategy learning wiki and embedded game functionality in ThreeWide |
