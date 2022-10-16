@@ -15,5 +15,6 @@
 |||3. Develop a strategy learning wiki and embedded game functionality in ThreeWide |
 |               DongYun Kim              | UI designer + vlogger      |   1. Responsible for creating attractive, user-friendly and easy-to-understand UI designs for users.|
 |||2. Make sure everything is well documented |
-|||3. Responsible for creating Vlogs|
+|||3. Manage meetings and updates with clients.|
+|||4. Responsible for creating Vlogs|
 
