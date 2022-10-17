@@ -23,6 +23,7 @@
 <td><p><strong>Level of</strong></p>
 <p><strong>Interest</strong></p></td>
 <td><strong>Level of Support</strong></td>
+<td><strong>Internal/External</strong></td>
 </tr>
 
 <tr>
@@ -31,6 +32,7 @@
 <td>High</td>
 <td>High</td>
 <td>Supportive</td>
+<td>Internal</td>
 </tr>
 <tr>
 <td>Dr. Maciag</td>
@@ -38,6 +40,7 @@
 <td>Low</td>
 <td>High</td>
 <td>Supportive</td>
+<td>Internal</td>
 </tr>
 
 <tr>
@@ -46,6 +49,7 @@
 <td>Low</td>
 <td>High</td>
 <td>Neutral</td>
+<td>External</td>
 </tr>
 <tr>
 <td>Tetris Player: Expert</td>
@@ -53,6 +57,7 @@
 <td>Low</td>
 <td>High</td>
 <td>Supportive</td>
+<td>External</td>
 </tr>
 </tbody>
 </table>
