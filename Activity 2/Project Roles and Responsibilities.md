@@ -2,7 +2,7 @@
 | :------------------------------------: | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 |            **Project Name**            | Threewide                |                                                                                                                                                    |
 |                **Name**                | **Role**                 | **Responsibilities**                                                                                                                               |
-|                Sponsor                 | Dr. Tim Maciag           | Project Mentor                                                                                                                                     |
+|         Dr. Tim Maciag                 |      Sponsor             | Project Mentor                                                                                                                                     |
 |                                        |                          | Lead weekly scrum                                                                                                                                  |
 |                                        |                          | Give suggestions and evaluation feedbacks regarding the project progress                                                                           |
 |         Benjamin Hajdukiewicz          | Scrum Master             | 1. Ensure the team member understand the project requirements                                                                                      |
