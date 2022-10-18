@@ -1,8 +1,12 @@
 # ThreeWide
+
 An interactive learning environment for Tetris.
 
 ## Vlog Intro
+
 [![VLOG 1](https://user-images.githubusercontent.com/36246244/193962589-14f2e920-f1e2-4168-8a62-d56b6bb708da.png)](https://youtu.be/5LqXDVvpI1g)
+
+## [VLOG 2](https://www.youtube.com/watch?v=Fa2MxcfW-VQ)
 
 ## Documentation
 
@@ -10,10 +14,14 @@ The goal of this project is to explore the Agile/Scrum process through the creat
 
 ### Activity 1
 
-[Activity 1](Activity%201/) introduced our team's project concept, though a quick vlog discussing the project background, reasoning, impact, who the project's audience is, and what technologies would be used. The [Project Board](https://github.com/orgs/teamcrusher/projects/1) is publicly accessible. 
+[Activity 1](/Project%20Initiation/) introduced our team's project concept, though a quick vlog discussing the project background, reasoning, impact, who the project's audience is, and what technologies would be used. The [Project Board](https://github.com/orgs/teamcrusher/projects/1) is publicly accessible.
 
 ### Activity 2
+
+[Activity 2](/PM%20documentation/) consisted of the supporting PM documentation to envision the MVPs and establish the groundwork to develop a quality deliverable.
+
 The [Project Board](https://github.com/orgs/teamcrusher/projects/3) is publicly accessible.
 
 ## Software license
+
 [Creative Commons Share & Share Alike (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
