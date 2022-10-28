@@ -12,6 +12,9 @@ An interactive learning environment for Tetris.
 
 The goal of this project is to explore the Agile/Scrum process through the creation of a defined MVP consisting of a webapp built on the Model View Controller (MVC) architecture using technologies such as MongoDB, Node.js, and Express JS. GitHub Projects will be used as the main project management tool and the use of workflows will be explored over the project lifecycle.
 
+### Project Board
+The [Project Board](https://github.com/orgs/teamcrusher/projects/3) post Project Initiation is publicly accessible.
+
 ### Activity 1
 
 [Activity 1](/Project%20Initiation/) introduced our team's project concept, though a quick vlog discussing the project background, reasoning, impact, who the project's audience is, and what technologies would be used. The [Project Board](https://github.com/orgs/teamcrusher/projects/1) is publicly accessible.
@@ -20,7 +23,9 @@ The goal of this project is to explore the Agile/Scrum process through the creat
 
 [Activity 2](/PM%20documentation/) consisted of the supporting PM documentation to envision the MVPs and establish the groundwork to develop a quality deliverable.
 
-The [Project Board](https://github.com/orgs/teamcrusher/projects/3) is publicly accessible.
+### Activity 3
+
+[Activity 3](/Design%20documentation/) consisted of the supporting design documentation to realize the envisioned MVPs and build upon the groundwork to develop a quality deliverable.
 
 ## Software license
 
