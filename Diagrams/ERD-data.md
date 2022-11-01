@@ -3,7 +3,7 @@
 ---
 
 ```mermaid
-  erDiagram;
+  erDiagram
     %%USERS ||--|{ STRATEGIES : have%%
     USERS ||--|{ GAMES : have
     USERS {  
