@@ -1,4 +1,9 @@
-graph TD
+# Tetris Flow Diagram
+
+---
+
+```mermaid
+  graph TD
     User[User]-- "Key down event" --> CheckProcessed{{Has key event been processed}}
     CheckProcessed -- "No" --> AddEvent[Add event to active events]
     AddEvent --> Handle["Handle event"]
@@ -49,4 +54,5 @@ graph TD
     CheckHold -- "Yes" --> PopPiece
 
     Handle -- "Soft drop event" --> EnableSoftDrop[Enable soft drop]
-    EnableSoftDrop --> SoftDropPiece[Move piece to the bottom of the board]
+    EnableSoftDrop --> SoftDropPiece[Move piece to the bottom of the board
+    ```
