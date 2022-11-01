@@ -10,8 +10,8 @@ sequenceDiagram
         User->>Embedded game : Open the React app (Threewide)
         activate Embedded game
 
-        Embedded game-->> User : React app shows wikis with pre-built scenario / setup on button click: TSS, TST, TSD
-        User->>Embedded game : User clicks any specific game button to play: TSS, TST,TSD etc
+        Embedded game-->> User : React app shows pre-built scenario / setup on button click: TSS, TST, TSD, etc.
+        User->>Embedded game : User clicks any specific game button to play: TSS, TST,TSD, etc.
         Embedded game -->> User : Load pre-built scenario / setup for the button clicked by user
         User ->> Embedded game : User plays pre-built scenario / setup
 
