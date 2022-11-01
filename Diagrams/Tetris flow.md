@@ -54,5 +54,5 @@
     CheckHold -- "Yes" --> PopPiece
 
     Handle -- "Soft drop event" --> EnableSoftDrop[Enable soft drop]
-    EnableSoftDrop --> SoftDropPiece[Move piece to the bottom of the board
+    EnableSoftDrop --> SoftDropPiece[Move piece to the bottom of the board]
     ```
