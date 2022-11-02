@@ -4,14 +4,14 @@
 
 ```mermaid
   erDiagram
-	USER ||--|{ STRATEGY : have
+	USER ||--|{ STRATEGY : has
 	USER {  
 	    int user_id
 	    string username
 		obj game_user
     }
     
-    %%STRATEGY ||--|| METRIC : have%%
+    %%STRATEGY ||--|| METRIC : has%%
     STRATEGY {  
 	    int gameId
 	    int stratId
@@ -23,16 +23,39 @@
 	    %%int metric%%
     %%}%%
     
-    %%METRIC ||--|| GAME : have%%  
-    STRATEGY ||--|{ GAME : have
+    %%METRIC ||--|| GAME : has%%  
+    STRATEGY ||--|{ GAME : has
     GAME {
 	    string gameName
 	    int gameId
-	    int stratId
     } 
+    
 ```
 
 >The above model is the abstraction of the data model further explored below.
+
+### Embedded Documents
+
+```mermaid
+  erDiagram
+    GAME_USER {
+	    int stratId
+	    int metric
+	    obj gamesPlayed
+    }
+    
+	GAME_STRAT {
+		string gameName
+		array pieceQueue
+		array initialState
+	}
+
+	SOLUTION {
+		int stepsToSolve
+		array finalState
+		string strategyText
+	}
+```
 
 ## Mock .bson documents
 Below are two mock .bson documents to provide further understanding of the data model of our MVC using a domain specific example.
