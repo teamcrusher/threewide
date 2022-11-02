@@ -25,7 +25,7 @@ The [Project Board](https://github.com/orgs/teamcrusher/projects/3) post Project
 
 ### Activity 3
 
-[Activity 3](/Design%20documentation/) consisted of the supporting design documentation to realize the envisioned MVPs and build upon the groundwork to develop a quality deliverable.
+[Activity 3](/Design%20documentation/) consisted of the supporting design documentation to realize the envisioned MVPs and build upon the groundwork to develop a quality deliverable. A [Hifi prototype](https://www.figma.com/proto/MPkA2x9Ayz0kzfVcsjlM3L/Hi-Fi-Prototype?scaling=min-zoom&page-id=0%3A1&starting-point-node-id=0%3A3&node-id=0%3A3) is available for testing user interactions in conjuction with the [user questionnaire](/Design%20documentation/User-questionaire.md). 
 
 ## Software license
 
