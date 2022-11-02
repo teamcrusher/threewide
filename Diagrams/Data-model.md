@@ -6,29 +6,31 @@
   erDiagram
 	USER ||--|{ STRATEGY : has
 	USER {  
-	    int user_id
-	    string username
+	  int user_id
+	  string username
 		obj game_user
     }
     
-    %%STRATEGY ||--|| METRIC : has%%
-    STRATEGY {  
-	    int gameId
-	    int stratId
-	    string stratName
-	    obj game_strat
-    }  
+  %%STRATEGY ||--|| METRIC : has%%
+  STRATEGY {  
+	  int stratId
+	  string stratName
+	  int metric
+	  obj game_strat
+    obj solution
+  }  
     
-    %%METRIC {%%  
-	    %%int metric%%
-    %%}%%
+  %%METRIC {%%  
+	  %%int metric%%
+  %%}%%
     
-    %%METRIC ||--|| GAME : has%%  
-    STRATEGY ||--|{ GAME : has
-    GAME {
-	    string gameName
-	    int gameId
-    } 
+  %%METRIC ||--|| GAME : has%%  
+  STRATEGY ||--|{ GAME : has
+  GAME {
+	  int stratId
+    int metric
+	  obj gamesPlayed
+  } 
     
 ```
 
@@ -41,7 +43,12 @@
     GAME_USER {
 	    int stratId
 	    int metric
-	    obj gamesPlayed
+	    array gamesPlayed
+    }
+
+    GAMES_PLAYED {
+	    int gameId
+	    array gamesPlayed
     }
     
 	GAME_STRAT {
@@ -66,9 +73,9 @@ Below are two mock .bson documents to provide further understanding of the data 
   "username": "username1",
   "game": [
     {
-      "strat_id": "strat123",
+      "strat_id": 123,
       "metric": 2, // number of times player reached a solution with given strategy
-      "GamesPlayed": [
+      "gamesPlayed": [
         {
           "gameId": 122, // specific game instance
           "gameName": "asdf122"
@@ -80,7 +87,7 @@ Below are two mock .bson documents to provide further understanding of the data 
       ]
     },
     {
-      "strat_id": "strat124",
+      "strat_id": 124,
       "metric": 1,
       "GamesPlayed": [
         {
@@ -90,7 +97,7 @@ Below are two mock .bson documents to provide further understanding of the data 
       ]
     },
     {
-      "strat_id": "strat125",
+      "strat_id": 125,
       "metric": 1,
       "GamesPlayed": [
         {
@@ -109,6 +116,7 @@ For the strategies, the chosen model is the document type including an array of 
 ```json
 {
   "strat": {
+    "stratid": 123,
     "stratName": "a bad strategy",
     "metric": 1, // the number of times any user has completed a game using this strat
     "game": {
