@@ -1,6 +1,6 @@
 # State Diagram
 
-[Tetris Flow](/Diagrams/Tetris%20flow.md) Diagram for reference within composite state of Gameplay. 
+[Tetris Flow](/Diagrams/Tetris-flow.md) Diagram for reference within composite state of Gameplay. 
 
 ---
 
