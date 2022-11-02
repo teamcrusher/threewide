@@ -1,7 +1,5 @@
 # Tetris Flow Diagram
 
----
-
 ```mermaid
   graph TD
     User[User]-- "Key down event" --> CheckProcessed{{Has key event been processed}}

@@ -1,3 +1,5 @@
+# MVC Architecture Overview
+
 ### Model
 ---
 Dictates how a game should be solved. What shows up in the solution data is how this game will end up being solved
