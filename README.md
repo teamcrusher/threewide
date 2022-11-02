@@ -8,6 +8,8 @@ An interactive learning environment for Tetris.
 
 ## [VLOG 2](https://www.youtube.com/watch?v=Fa2MxcfW-VQ)
 
+## [VLOG 3](https://www.youtube.com/watch?v=_gXbtVUUC20)
+
 ## Documentation
 
 The goal of this project is to explore the Agile/Scrum process through the creation of a defined MVP consisting of a webapp built on the Model View Controller (MVC) architecture using technologies such as MongoDB, Node.js, and Express JS. GitHub Projects will be used as the main project management tool and the use of workflows will be explored over the project lifecycle.
