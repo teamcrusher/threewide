@@ -12,7 +12,7 @@ import { getPieceSizesFromPieceType } from "@utils/tetris/PieceSizes";
 const Home: NextPage = () => {
   const [search, setSearch] = useState(PieceType.None);
 
-  const stratagies = trpc.strategy.search.useQuery({ name: search });
+  // const stratagies = trpc.strategy.search.useQuery({ name: search });
 
   const convertStringsToPieceType = (grid: string[][]): PieceType[][] => {
     let pieceTypeGrid: PieceType[][] = [];
@@ -83,22 +83,22 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Create T3 App</title>
+        <title>Three wide</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex w-full flex-col items-center justify-center pt-6 text-2xl text-blue-500">
-        {/* <input
+      {/* <div className="flex w-full flex-col items-center justify-center pt-6 text-2xl text-blue-500">
+        <input
           className="border-2 border-black"
           type="text"
           onChange={(e) => setSearch(e.target.value)}
-        /> */}
+        />
         {stratagies.data ? (
           stratagies.data.results?.map((result) => <p>{result.name}</p>)
         ) : (
           <p>Loading..</p>
         )}
-      </div>
+      </div> */}
 
       <Tetris
         width={200}

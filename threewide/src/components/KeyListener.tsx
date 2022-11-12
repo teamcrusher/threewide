@@ -1,4 +1,4 @@
-import React, { KeyboardEventHandler } from "react";
+import React, { KeyboardEventHandler, SyntheticEvent } from "react";
 import { useState } from "react";
 
 type Direction = "left" | "right" | null;
@@ -39,7 +39,7 @@ const KeyListener = ({
 }: KeyListenerEventHandlers) => {
   const controls: { [id: string]: TetrisEvent } = {
     ArrowLeft: TetrisEvent.moveLeft,
-    ArrowRight: TetrisEvent.moveLeft,
+    ArrowRight: TetrisEvent.moveRight,
     KeyD: TetrisEvent.hardDrop,
     ArrowDown: TetrisEvent.softDrop,
     ArrowUp: TetrisEvent.rotate90,
@@ -75,8 +75,9 @@ const KeyListener = ({
   };
 
   const onKeyDownHandler: KeyboardEventHandler = (event) => {
-    event.preventDefault();
     console.log(event.code);
+    event.preventDefault();
+
     let move: TetrisEvent | undefined = controls[event.code];
 
     if (move === undefined) return;
@@ -92,7 +93,12 @@ const KeyListener = ({
   const [currentActions, setCurrentActions] = useState<TetrisEvent[]>([]);
 
   return (
-    <div onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
+    <div
+      tabIndex={0}
+      className="key-listener"
+      onKeyDown={onKeyDownHandler}
+      onKeyUp={onKeyUpHandler}
+    >
       {children}
     </div>
   );

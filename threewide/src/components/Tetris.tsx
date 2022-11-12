@@ -178,8 +178,8 @@ const Tetris = ({
       PieceType.J,
       PieceType.L,
       PieceType.O,
-      PieceType.T,
       PieceType.Z,
+      PieceType.I,
     ];
 
     for (let i = 0; i < 7; i++) {
@@ -594,6 +594,8 @@ const Tetris = ({
     currentPiece.pieceLocation
   );
 
+  const tileDimensions = { height: 20, width: 20 };
+
   return (
     <KeyListener
       onSoftDropDisable={onSoftDropDisable}
@@ -609,14 +611,14 @@ const Tetris = ({
         <div>
           <Piece
             location={shadowPieceLocation}
-            tileDimensions={{ height: 20, width: 20 }}
+            tileDimensions={tileDimensions}
             texture={ShadowPiece}
             pieceType={currentPiece.pieceType}
             rotation={currentPiece.pieceRotation}
           />
           <Piece
             location={currentPiece.pieceLocation}
-            tileDimensions={{ height: 20, width: 20 }}
+            tileDimensions={tileDimensions}
             texture={getTextureFromBoardStateTile(currentPiece.pieceType)}
             pieceType={currentPiece.pieceType}
             rotation={currentPiece.pieceRotation}

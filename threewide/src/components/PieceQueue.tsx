@@ -47,23 +47,25 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
 
   function getPieceQueue(q: PieceType[]) {
     let pieces = [];
+    let index = 0;
     for (let queueElement of q) {
       pieces.push(
         <img
+          key={`piece queue - ${index}`}
           src={getTextureFromBoardStateTile(queueElement).src}
-          className="noSelect pieceQueue"
+          className="noSelect pieceQueue mb-2"
           width="10px"
           height="10px"
         />
       );
-
+      index += 1;
       if (pieces.length == 7) break;
     }
 
     return pieces;
   }
 
-  return <div>{getPieceQueue(queue)}</div>;
+  return <div className="p-2">{getPieceQueue(queue)}</div>;
 };
 
 export default PieceQueue;
