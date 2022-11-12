@@ -75,7 +75,6 @@ const KeyListener = ({
   };
 
   const onKeyDownHandler: KeyboardEventHandler = (event) => {
-    console.log(event.code);
     event.preventDefault();
 
     let move: TetrisEvent | undefined = controls[event.code];

@@ -150,7 +150,6 @@ const Tetris = ({
     let newQueue = [...queue];
 
     newQueue = newQueue.concat(generateBag());
-    console.log(newQueue);
     if (queue.length === 0) {
       let firstPiece = newQueue[0]!;
 
@@ -230,16 +229,15 @@ const Tetris = ({
       currentPiece.pieceRotation,
       rotation
     );
-    console.log(kickTables);
+
     for (let i = 0; i < kickTables.length; i++) {
       let kickLocation: [number, number] = [
         newLocation[0] + kickTables[i]![0],
         newLocation[1] + kickTables[i]![1],
       ];
-      console.log(kickLocation, kickTables[i]);
+
       if (isPieceMoveValidWithRotation(kickLocation, newRotation)) {
         newLocation = kickLocation;
-        console.log(kickLocation);
         break;
       } else if (i == kickTables.length - 1) {
         return;
@@ -247,14 +245,12 @@ const Tetris = ({
     }
 
     if (isSoftDroping) {
-      console.log("KICK LOCATION", newLocation);
       newLocation = getPathFindPieceWithRotation(
         [0, 1],
         [newLocation[0], 20],
         newLocation,
         newRotation
       );
-      console.log("KICK LOCATION SOFT DROPPED", newLocation);
     }
 
     setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
