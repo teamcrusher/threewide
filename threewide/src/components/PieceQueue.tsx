@@ -11,6 +11,7 @@ import {
 } from "@public/BoardTiles";
 import { PieceType } from "src/types/tetris";
 import { StaticImageData } from "next/image";
+import Piece from "./Piece";
 
 const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
   function getTextureFromBoardStateTile(boardTile: PieceType): StaticImageData {
@@ -50,12 +51,13 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
     let index = 0;
     for (let queueElement of q) {
       pieces.push(
-        <img
+        <Piece
           key={`piece queue - ${index}`}
-          src={getTextureFromBoardStateTile(queueElement).src}
-          className="noSelect pieceQueue mb-2"
-          width="10px"
-          height="10px"
+          pieceType={queueElement}
+          location={[0, index * 3]}
+          rotation={0}
+          texture={getTextureFromBoardStateTile(queueElement)}
+          tileDimensions={{ width: 15, height: 15 }}
         />
       );
       index += 1;
