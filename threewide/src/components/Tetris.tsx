@@ -604,6 +604,16 @@ const Tetris = ({
       onRotatePieceHandler={onHandleRotatePiece}
     >
       <div className="flex h-[400px]">
+        <div className=" flex w-20 justify-center">
+          <Piece
+            location={[0, 1]}
+            tileDimensions={{ width: 15, height: 15 }}
+            texture={getTextureFromBoardStateTile(currentHeldPiece.pieceType)}
+            pieceType={currentHeldPiece.pieceType}
+            rotation={0}
+          />
+        </div>
+
         <div>
           <Piece
             location={shadowPieceLocation}
