@@ -76,12 +76,13 @@ const Tetris = ({
   const deBouncedDAS = useDebounce(currentDAS, cancelDAS, setCancelDAS);
 
   useEffect(() => {
+    setCurrentDAS({ direction: deBouncedDAS.direction, enabled: true });
+
     if (deBouncedDAS.direction == "left") {
       movePieceLeft(10);
     } else if (deBouncedDAS.direction == "right") {
       movePieceRight(10);
     }
-    setCurrentDAS({ direction: deBouncedDAS.direction, enabled: true });
   }, [deBouncedDAS]);
 
   const isLeftDas = currentDAS.direction == "left" && currentDAS.enabled;

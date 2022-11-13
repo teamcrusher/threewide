@@ -1,13 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export interface StrategyDocument extends mongoose.Document {
-    name : string
+  name: string;
+  games: Types.ObjectId[];
 }
 
 const StragetySchema = new mongoose.Schema({
-    name : String, 
-})
+  name: String,
+  games: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "GameDescription",
+    },
+  ],
+});
 
-const StrategyModel : mongoose.Model<StrategyDocument> = mongoose.models.Strategy || mongoose.model<StrategyDocument>('Strategy', StragetySchema)
+const StrategyModel: mongoose.Model<StrategyDocument> =
+  mongoose.models.Strategy ||
+  mongoose.model<StrategyDocument>("Strategy", StragetySchema);
 
-export default StrategyModel
+export default StrategyModel;

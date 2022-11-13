@@ -67,7 +67,7 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
     return pieces;
   }
 
-  return <div className="p-2">{getPieceQueue(queue)}</div>;
+  return <div className="w-20 p-2">{getPieceQueue(queue)}</div>;
 };
 
 export default PieceQueue;

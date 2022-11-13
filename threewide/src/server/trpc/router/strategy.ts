@@ -8,22 +8,22 @@ export const strategyRouter = router({
   search: publicProcedure
     .input(z.object({ name: z.string().nullish() }).nullish())
     .query(async ({ input }) => {
-        try {
-            await connectMongo();
+      try {
+        await connectMongo();
+        console.log(input?.name);
+        const results = await StrategyModel.find({
+          name: {
+            $regex: input?.name,
+          },
+        });
 
-            const results = await StrategyModel.find({
-                name : {
-                $regex : input?.name
-            }})
-            
-            console.log(results)
-            return {
-                results
-          };
-        } catch (err) {
-            console.log(err)
-            return {error: err}
-        }
-
+        console.log(results);
+        return {
+          results,
+        };
+      } catch (err) {
+        console.log(err);
+        return { error: err };
+      }
     }),
 });

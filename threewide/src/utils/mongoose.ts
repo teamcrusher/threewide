@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 
-const connectMongo = async () => mongoose.connect(process.env.MONGO_URL!);
+const connectMongo = async () => {
+  if (mongoose.connections[0]?.readyState ?? false) return;
 
-export default connectMongo
+  mongoose.connect("mongodb://127.0.0.1:27017/test");
+};
+
+export default connectMongo;
