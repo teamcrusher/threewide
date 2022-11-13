@@ -118,6 +118,7 @@ const Home = (session: Session) => {
             startingBoardState={startingBoardState}
             startingPieceQueue={startingBoardQueue}
             generatePieceQueue={true}
+            playGame={true}
           />
         </div>
       </div>

@@ -10,14 +10,12 @@ export const strategyRouter = router({
     .query(async ({ input }) => {
       try {
         await connectMongo();
-        console.log(input?.name);
         const results = await StrategyModel.find({
           name: {
             $regex: input?.name,
           },
         });
 
-        console.log(results);
         return {
           results,
         };

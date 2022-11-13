@@ -39,6 +39,7 @@ type TetrisProps = {
   startingBoardState: PieceType[][];
   startingPieceQueue: PieceType[];
   generatePieceQueue: boolean;
+  playGame: boolean;
 };
 
 type TetrisPiece = {
@@ -65,7 +66,24 @@ const Tetris = ({
   startingBoardState,
   startingPieceQueue,
   generatePieceQueue,
+  playGame,
 }: TetrisProps) => {
+  if (!playGame) {
+    return (
+      <div className="flex h-[400px]">
+        <div className=" flex w-20 justify-center"></div>
+        <div>
+          <Board
+            width={width}
+            height={height}
+            boardState={startingBoardState}
+          />
+        </div>
+        <div className=" flex w-20 justify-center"></div>
+      </div>
+    );
+  }
+
   const [isSoftDroping, setIsSoftDroping] = useState<boolean>(false);
   const [currentDAS, setCurrentDAS] = useState<DAS>({
     direction: null,
