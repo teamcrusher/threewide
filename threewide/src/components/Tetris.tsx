@@ -512,10 +512,12 @@ const Tetris = ({
     if (currentHeldPiece.hasHeldPiece) return;
 
     if (currentHeldPiece.pieceType == "") {
+      if (queue.length == 0 || queue[0] == PieceType.None) return;
       setCurrentHeldPiece({
         pieceType: currentPiece.pieceType,
         hasHeldPiece: true,
       });
+
       setCurrentPiece({
         pieceType: queue[0]!,
         pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, board),
