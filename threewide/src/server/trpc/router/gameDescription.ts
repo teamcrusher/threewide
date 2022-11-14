@@ -18,8 +18,6 @@ export const gameDescriptionRouter = router({
           },
         });
 
-        console.log(strategy?.games.map((id) => new Types.ObjectId(id)));
-
         const games = await GameDescriptionModel.find({
           strategy: {
             $eq: strategy?._id,

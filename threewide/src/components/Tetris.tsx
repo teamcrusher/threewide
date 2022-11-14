@@ -5,8 +5,7 @@ import Piece from "./Piece";
 import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
-import { PieceType, Rotation } from "../types/tetris";
-
+import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
 import { useState, useEffect } from "react";
 
 const useDebounce = (
@@ -40,12 +39,17 @@ type TetrisProps = {
   startingPieceQueue: PieceType[];
   generatePieceQueue: boolean;
   playGame: boolean;
-};
-
-type TetrisPiece = {
-  pieceType: PieceType;
-  pieceRotation: Rotation;
-  pieceLocation: [number, number];
+  onPointGained?: (
+    currentBoardState: PieceType[][],
+    completedBoardState: PieceType[][],
+    completedPiece: TetrisPiece,
+    clearedLines: number,
+    combo: number
+  ) => Points;
+  onGameEnd?: (
+    finalBoardState: PieceType[][],
+    lastPoints: Points | undefined
+  ) => void;
 };
 
 type HeldPiece = {
@@ -67,6 +71,8 @@ const Tetris = ({
   startingPieceQueue,
   generatePieceQueue,
   playGame,
+  onPointGained,
+  onGameEnd,
 }: TetrisProps) => {
   if (!playGame) {
     return (
@@ -83,7 +89,6 @@ const Tetris = ({
       </div>
     );
   }
-
   const [isSoftDroping, setIsSoftDroping] = useState<boolean>(false);
   const [currentDAS, setCurrentDAS] = useState<DAS>({
     direction: null,
@@ -114,7 +119,9 @@ const Tetris = ({
       startingPieceQueue[0]!,
       startingBoardState
     ),
+    isSlamKicked: false,
   });
+  const [combo, setCombo] = useState<number>(0);
 
   const [currentHeldPiece, setCurrentHeldPiece] = useState<HeldPiece>({
     pieceType: PieceType.None,
@@ -179,6 +186,7 @@ const Tetris = ({
           board
         );
         piece.pieceRotation = 0;
+        piece.isSlamKicked = false;
         return { ...piece };
       });
       newQueue = newQueue.slice(1);
@@ -216,6 +224,8 @@ const Tetris = ({
 
     if (generatePieceQueue && queue.length <= 14) {
       newQueue.concat(generateBag());
+    } else if (newQueue.length == 0) {
+      newQueue = [PieceType.None];
     }
 
     setQueue(newQueue);
@@ -249,6 +259,7 @@ const Tetris = ({
       rotation
     );
 
+    let isSlamKicked = false;
     for (let i = 0; i < kickTables.length; i++) {
       let kickLocation: [number, number] = [
         newLocation[0] + kickTables[i]![0],
@@ -257,6 +268,7 @@ const Tetris = ({
 
       if (isPieceMoveValidWithRotation(kickLocation, newRotation)) {
         newLocation = kickLocation;
+        if (i > 1) isSlamKicked = true;
         break;
       } else if (i == kickTables.length - 1) {
         return;
@@ -275,6 +287,7 @@ const Tetris = ({
     setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
       piece.pieceLocation = newLocation;
       piece.pieceRotation = newRotation;
+      piece.isSlamKicked = isSlamKicked;
       return { ...piece };
     });
   }
@@ -319,6 +332,7 @@ const Tetris = ({
     if (newLocation != currentPiece.pieceLocation) {
       setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
         piece.pieceLocation = newLocation;
+        piece.isSlamKicked = false;
         return { ...piece };
       });
     }
@@ -338,6 +352,7 @@ const Tetris = ({
     if (newLocation != currentPiece.pieceLocation) {
       setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
         piece.pieceLocation = newLocation;
+        piece.isSlamKicked = false;
         return { ...piece };
       });
     }
@@ -505,6 +520,7 @@ const Tetris = ({
         pieceType: queue[0]!,
         pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, board),
         pieceRotation: 0,
+        isSlamKicked: false,
       });
       popPiece();
     } else {
@@ -517,6 +533,7 @@ const Tetris = ({
         pieceType: heldPiece,
         pieceLocation: getPieceStartingLocationFromPieceType(heldPiece, board),
         pieceRotation: 0,
+        isSlamKicked: false,
       });
     }
   }
@@ -561,23 +578,51 @@ const Tetris = ({
     }
 
     let newBoard: PieceType[][] = [];
+    let clearedLines = 0;
     for (let row = 0; row < 20; row++) {
       if (removedYLocations.has(row)) {
+        clearedLines += 1;
         newBoard.unshift([...EMPTY_ROW]);
       } else {
         newBoard.push(board[row]!);
       }
     }
 
+    let points: Points | undefined;
+
+    if (onPointGained && clearedLines !== 0) {
+      points = onPointGained(
+        board,
+        newBoard,
+        { ...currentPiece, pieceLocation: placePieceLocation },
+        clearedLines,
+        combo
+      );
+    }
+
+    if (clearedLines == 0) {
+      setCombo(0);
+    } else {
+      setCombo(combo + 1);
+    }
+    setBoard(newBoard);
     setCurrentHeldPiece({ ...currentHeldPiece, hasHeldPiece: false });
     popPiece();
-    setBoard(newBoard);
 
     setCurrentPiece({
-      pieceType: queue[0]!,
+      pieceType: queue[0] ?? PieceType.None,
       pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, newBoard),
       pieceRotation: 0,
+      isSlamKicked: false,
     });
+    if (
+      onGameEnd &&
+      (queue.length == 0 || queue[0] == PieceType.None) &&
+      currentHeldPiece.pieceType == PieceType.None
+    ) {
+      onGameEnd(newBoard, points);
+      return;
+    }
   }
 
   function onSoftDropHandler(): void {
@@ -589,7 +634,17 @@ const Tetris = ({
       currentPiece.pieceLocation
     );
 
-    setCurrentPiece({ ...currentPiece, pieceLocation: softDropLocation });
+    if (
+      softDropLocation[0] == currentPiece.pieceLocation[0] &&
+      softDropLocation[1] == currentPiece.pieceLocation[1]
+    )
+      return;
+
+    setCurrentPiece({
+      ...currentPiece,
+      pieceLocation: softDropLocation,
+      isSlamKicked: false,
+    });
   }
 
   function onSoftDropDisable(): void {
@@ -622,7 +677,7 @@ const Tetris = ({
       onHardDropHandler={onHandlePlacePiece}
       onRotatePieceHandler={onHandleRotatePiece}
     >
-      <div className="flex h-[400px]">
+      <div className="flex">
         <div className=" flex w-20 justify-center">
           <Piece
             location={[0, 1]}

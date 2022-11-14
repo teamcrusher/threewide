@@ -1,18 +1,30 @@
 import mongoose, { ObjectId, Types } from "mongoose";
 import { PieceType } from "src/types/tetris";
 
+export interface Goal {
+  linesCleared?: number | undefined;
+  pointsGained?: number | undefined;
+  tspinSingles?: number | undefined;
+  tspinTriples?: number | undefined;
+  tspinDoubles?: number | undefined;
+  tspinMinis?: number | undefined;
+  tspinMiniDoubles?: number | undefined;
+  finalState?: PieceType[][] | undefined;
+  allowAllClears?: boolean | undefined;
+}
+
 export interface GameDescription extends mongoose.Document<ObjectId> {
   startingBoardState: PieceType[][];
   startingPieceQueue: PieceType[];
-  goal: {
-    linesCleared: number | undefined;
-    pointsGained: number | undefined;
-    tspinSingles: number | undefined;
-    tspinTriples: number | undefined;
-    tspinDoubles: number | undefined;
-    finalState: string[][] | undefined;
-  };
+  goal: Goal;
   strategy: Types.ObjectId;
+}
+
+//small hack for now will fix later
+export interface GameType {
+  startingBoardState: PieceType[][];
+  startingPieceQueue: PieceType[];
+  goal: Goal;
 }
 
 const goalSchema = new mongoose.Schema({

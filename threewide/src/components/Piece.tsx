@@ -19,6 +19,8 @@ const Piece = ({
   pieceType,
   location,
 }: PieceProperties) => {
+  if (pieceType == PieceType.None) return <></>;
+
   function getPiece() {
     return getTileLocationsFromPieceAndRotations(pieceType, rotation).map(
       (pieceLocation: [number, number]) => {

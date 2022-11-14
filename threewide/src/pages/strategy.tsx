@@ -13,275 +13,72 @@ import { PieceType } from "src/types/tetris";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import { GameDescription } from "src/models/game_description.model";
+import {
+  GameDescription,
+  GameType,
+  Goal,
+} from "src/models/game_description.model";
+import Game from "@components/Game";
 
-const Home = (session: Session) => {
+type ActiveGame = {
+  game: GameType;
+  gameName: string;
+  gameIndex: number;
+};
+
+const Strategy = (session: Session) => {
   const router = useRouter();
 
-  const [startingBoardState, setStartingBoardState] = useState<PieceType[][]>([
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-  ]);
-  const [startingPieceQueue, setStartingPieceQueue] = useState<PieceType[]>([]);
-  const [playGame, setPlayGame] = useState<boolean>(false);
-  const [gameName, setGameName] = useState("");
+  const [activeGame, setActiveGame] = useState<ActiveGame | undefined>();
+
   const stratName: string = router.query.name as string;
+  const [gameMessage, setGameMessage] = useState<string>("");
 
   const gameDescriptions = trpc.gameDescription.getGames.useQuery({
     name: stratName,
   });
 
-  const gameData = gameDescriptions.data;
+  const copyBoard = (board: PieceType[][]): PieceType[][] => {
+    let newBoard: PieceType[][] = [];
+
+    for (let row of board) {
+      let newRow: PieceType[] = [];
+      for (let item of row) {
+        newRow.push(item);
+      }
+      newBoard.push(newRow);
+    }
+    return newBoard;
+  };
 
   const updateBoard = (
     e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
-    startingBoardState: PieceType[][],
-    startingPieceQueue: PieceType[],
-    gameName: string
+    game: GameDescription,
+    gameName: string,
+    gameIndex: number
   ): void => {
     e.preventDefault();
-    setStartingBoardState(startingBoardState);
-    setStartingPieceQueue(startingPieceQueue);
-    setPlayGame(true);
-    setGameName(gameName);
+    let gameCopy: GameType = {
+      startingBoardState: copyBoard(game.startingBoardState),
+      startingPieceQueue: [...game.startingPieceQueue],
+      goal: game.goal,
+    };
+
+    console.log(gameCopy.startingBoardState);
+    setGameMessage("");
+    setActiveGame({ game: gameCopy, gameName, gameIndex });
+  };
+
+  const onGameWin = (): void => {
+    setGameMessage("You win");
+  };
+
+  const onGameLose = (): void => {
+    // setActiveGame({
+    //   game: activeGame!.game,
+    //   gameName: activeGame!.gameName + new Date().getTime().toString(),
+    // });
+    setGameMessage("Try again");
   };
 
   return (
@@ -296,14 +93,7 @@ const Home = (session: Session) => {
             gameDescriptions.data.games?.map((game, index) => (
               <p
                 key={`game ${index}`}
-                onClick={(e) =>
-                  updateBoard(
-                    e,
-                    game.startingBoardState,
-                    game.startingPieceQueue,
-                    `game ${index}`
-                  )
-                }
+                onClick={(e) => updateBoard(e, game, `game ${index}`, index)}
               >
                 Game: {index}
               </p>
@@ -313,15 +103,13 @@ const Home = (session: Session) => {
           )}
         </div>
         <div className="ml-0 mr-auto">
-          <Tetris
-            key={`Active game: ${gameName}`}
-            width={200}
-            height={400}
-            startingBoardState={startingBoardState}
-            startingPieceQueue={startingPieceQueue}
-            generatePieceQueue={false}
-            playGame={playGame}
+          <Game
+            key={`Active game: ${activeGame?.gameName}`}
+            game={activeGame?.game}
+            onGameLose={onGameLose}
+            onGameWin={onGameWin}
           />
+          <div>{gameMessage}</div>
         </div>
       </div>
     </>
@@ -347,4 +135,4 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
-export default Home;
+export default Strategy;
