@@ -421,8 +421,6 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
       newPoints.backToBackLevel += 1;
     }
 
-    console.log(isTspin, isTspinMini);
-
     switch (clearedLines) {
       case 4:
         linesSent += 4;
@@ -451,7 +449,6 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
           linesSent += 2;
         } else if (isTspinMini) {
           newPoints.tspinMinis! += 1;
-          console.log("ADDED TSPIN MINI");
           linesSent += getSingleComboAmount(combo);
         } else {
           linesSent += getSingleComboAmount(combo);
@@ -471,7 +468,6 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
 
     newPoints.pointsGained! += linesSent;
     newPoints.linesCleared! += clearedLines;
-    console.log(newPoints);
     setPoints(newPoints);
 
     //TODO: maybe refactor this?
@@ -499,7 +495,6 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     lastPoints: Points | undefined
   ): void => {
     let finalPoints = lastPoints ?? points;
-    console.log("FINAL POINTS", finalPoints, game.goal);
 
     if (
       (game.goal.linesCleared &&

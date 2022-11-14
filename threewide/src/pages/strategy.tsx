@@ -54,7 +54,6 @@ const Strategy = (session: Session) => {
       goal: game.goal,
     };
 
-    console.log(gameCopy.startingBoardState);
     setGameMessage("");
     setActiveGame({ game: gameCopy, gameName, gameIndex });
   };
