@@ -1,8 +1,9 @@
 import mongoose, { Types } from "mongoose";
 
-export interface StrategyDocument extends mongoose.Document {
+interface StrategyDocument extends mongoose.Document, Strategy {}
+
+export interface Strategy {
   name: string;
-  games: Types.ObjectId[];
 }
 
 const StragetySchema = new mongoose.Schema({

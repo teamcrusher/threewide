@@ -1,27 +1,17 @@
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  type NextPage,
-} from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { MouseEvent, useState } from "react";
 import Head from "next/head";
-import { Schema } from "mongoose";
 
 import { trpc } from "../utils/trpc";
-import Tetris from "@components/Tetris";
 import { PieceType } from "src/types/tetris";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import {
-  GameDescription,
-  GameType,
-  Goal,
-} from "src/models/game_description.model";
-import Game from "@components/Game";
+import { Game, Goal } from "src/models/game_description.model";
+import TetrisGame from "@components/Game";
 
 type ActiveGame = {
-  game: GameType;
+  game: Game;
   gameName: string;
   gameIndex: number;
 };
@@ -53,12 +43,12 @@ const Strategy = (session: Session) => {
 
   const updateBoard = (
     e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
-    game: GameDescription,
+    game: Game,
     gameName: string,
     gameIndex: number
   ): void => {
     e.preventDefault();
-    let gameCopy: GameType = {
+    let gameCopy: Game = {
       startingBoardState: copyBoard(game.startingBoardState),
       startingPieceQueue: [...game.startingPieceQueue],
       goal: game.goal,
@@ -103,7 +93,7 @@ const Strategy = (session: Session) => {
           )}
         </div>
         <div className="ml-0 mr-auto">
-          <Game
+          <TetrisGame
             key={`Active game: ${activeGame?.gameName}`}
             game={activeGame?.game}
             onGameLose={onGameLose}

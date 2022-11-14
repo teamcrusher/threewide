@@ -1,10 +1,6 @@
 import { StaticImageData } from "next/image";
 import React, { useState } from "react";
-import {
-  GameDescription,
-  GameType,
-  Goal,
-} from "src/models/game_description.model";
+import { Game, Goal } from "src/models/game_description.model";
 import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
 import { boolean, number } from "zod";
 import Board from "./Board";
@@ -12,12 +8,12 @@ import Piece from "./Piece";
 import Tetris from "./Tetris";
 
 export type GameProperties = {
-  game: GameType | undefined;
+  game: Game | undefined;
   onGameWin: () => void;
   onGameLose: () => void;
 };
 
-const Game = ({ game, onGameWin, onGameLose }: GameProperties) => {
+const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   const emptyBoard = [
     [
       PieceType.None,
@@ -541,4 +537,4 @@ const Game = ({ game, onGameWin, onGameLose }: GameProperties) => {
   );
 };
 
-export default Game;
+export default TetrisGame;

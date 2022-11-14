@@ -13,15 +13,11 @@ export interface Goal {
   allowAllClears?: boolean | undefined;
 }
 
-export interface GameDescription extends mongoose.Document<ObjectId> {
-  startingBoardState: PieceType[][];
-  startingPieceQueue: PieceType[];
-  goal: Goal;
+interface GameDescription extends mongoose.Document<ObjectId>, Game {
   strategy: Types.ObjectId;
 }
 
-//small hack for now will fix later
-export interface GameType {
+export interface Game {
   startingBoardState: PieceType[][];
   startingPieceQueue: PieceType[];
   goal: Goal;
