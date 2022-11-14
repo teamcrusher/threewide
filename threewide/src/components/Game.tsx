@@ -470,9 +470,6 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     newPoints.linesCleared! += clearedLines;
     setPoints(newPoints);
 
-    //TODO: maybe refactor this?
-    //useState for some reason wont update the points when the game ends -_-
-    //we need to do this jank so it actually has the correct points data updated with the last clear when the game ends
     return newPoints;
   };
 
