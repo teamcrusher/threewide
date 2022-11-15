@@ -26,6 +26,7 @@ const Strategy = (session: Session) => {
 
   const gameDescriptions = trpc.gameDescription.getGames.useQuery({
     name: stratName,
+    userId: session.user?.id!
   });
 
   const copyBoard = (board: PieceType[][]): PieceType[][] => {
@@ -82,6 +83,7 @@ const Strategy = (session: Session) => {
             gameDescriptions.data.games?.map((game, index) => (
               <p
                 key={`game ${index}`}
+                className={`text-${game.isCompleted ? 'green' : game.isAttempted ? 'yellow' : 'blue'}-500`}
                 onClick={(e) => updateBoard(e, game, `game ${index}`, index)}
               >
                 Game: {index}
