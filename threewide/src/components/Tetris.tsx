@@ -18,7 +18,7 @@ const useDebounce = (
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (!cancel && val.direction != null && !val.enabled) {
-      timer = setTimeout(() => setDebounceVal(val), 100);
+      timer = setTimeout(() => setDebounceVal(val), 80);
       setCancel(false);
     }
 
@@ -172,30 +172,32 @@ const Tetris = ({
     return [startingXLocation, startingYLocation];
   }
 
-  if (generatePieceQueue && queue.length < 14) {
-    let newQueue = [...queue];
+  useEffect(() => {
+    if (generatePieceQueue && queue.length < 14) {
+      let newQueue = [...queue];
 
-    newQueue = newQueue.concat(generateBag());
-    if (queue.length === 0) {
-      let firstPiece = newQueue[0]!;
+      newQueue = newQueue.concat(generateBag());
+      if (queue.length === 0) {
+        let firstPiece = newQueue[0]!;
 
-      setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
-        piece.pieceType = firstPiece;
-        piece.pieceLocation = getPieceStartingLocationFromPieceType(
-          firstPiece,
-          board
-        );
-        piece.pieceRotation = 0;
-        piece.isSlamKicked = false;
-        return { ...piece };
-      });
-      newQueue = newQueue.slice(1);
+        setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
+          piece.pieceType = firstPiece;
+          piece.pieceLocation = getPieceStartingLocationFromPieceType(
+            firstPiece,
+            board
+          );
+          piece.pieceRotation = 0;
+          piece.isSlamKicked = false;
+          return { ...piece };
+        });
+        newQueue = newQueue.slice(1);
+      }
+
+      newQueue = newQueue.concat(generateBag());
+
+      setQueue(newQueue);
     }
-
-    newQueue = newQueue.concat(generateBag());
-
-    setQueue(newQueue);
-  }
+  }, []);
 
   function generateBag(): PieceType[] {
     let pieces: PieceType[] = [
