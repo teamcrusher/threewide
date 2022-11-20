@@ -20,7 +20,7 @@ export const userGameResultRouter = router({
 
         await UserGameResultModel.updateOne(
           {
-            userId: {
+            _id: {
               $eq: new Types.ObjectId(input.userId),
             },
             gameId: {

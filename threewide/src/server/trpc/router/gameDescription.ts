@@ -27,7 +27,7 @@ export const gameDescriptionRouter = router({
         });
 
         const games = await GameDescriptionModel.find({
-          strategy: {
+          _id: {
             $eq: strategy?._id,
           },
         });
@@ -35,7 +35,7 @@ export const gameDescriptionRouter = router({
         let userGames: Promise<UserGame>[] = games.map(async (game) => {
           let userGameResult: UserGameResultDocument | null =
             await UserGameResultModel.findOne({
-              userId: {
+              _id: {
                 $eq: new Types.ObjectId(input.userId),
               },
               gameId: {
