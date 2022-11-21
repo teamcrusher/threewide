@@ -20,13 +20,12 @@ const Piece = ({
   location,
 }: PieceProperties) => {
   if (pieceType == PieceType.None) return <></>;
-
   function getPiece() {
     return getTileLocationsFromPieceAndRotations(pieceType, rotation).map(
       (pieceLocation: [number, number]) => {
         return (
           <img
-            key={Math.random()}
+            key={`${location[0]}${location[1]}${rotation}${pieceType}${pieceLocation[0]}${pieceLocation[1]}`}
             style={{
               left: `${pieceLocation[0] * tileDimensions.width}px`,
               top: `${pieceLocation[1] * tileDimensions.height}px`,
