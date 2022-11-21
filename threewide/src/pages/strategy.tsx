@@ -16,6 +16,7 @@ type ActiveGame = {
   game: Game;
   gameName: string;
   gameId: string;
+  isCompleted: boolean;
 };
 
 const Strategy = () => {
@@ -51,7 +52,8 @@ const Strategy = () => {
     e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
     game: Game,
     gameName: string,
-    gameId: string
+    gameId: string,
+    isCompleted: boolean
   ): void => {
     e.preventDefault();
     console.log(game.startingBoardState);
@@ -64,10 +66,8 @@ const Strategy = () => {
     };
 
     setGameMessage("");
-    setActiveGame({ game: gameCopy, gameName, gameId });
+    setActiveGame({ game: gameCopy, gameName, gameId, isCompleted });
   };
-
-  console.log(session.data?.user);
 
   const onGameWin = (): void => {
     userGameResult.mutate({
@@ -86,11 +86,12 @@ const Strategy = () => {
   };
 
   const onGameLose = (): void => {
-    userGameResult.mutate({
-      userId: session.data?.user?.name!,
-      gameId: activeGame?.gameId!,
-      isCompleted: false,
-    });
+    if (!activeGame?.isCompleted)
+      userGameResult.mutate({
+        userId: session.data?.user?.name!,
+        gameId: activeGame?.gameId!,
+        isCompleted: false,
+      });
 
     gameDescriptions.data!.games!.filter(
       (game) => game.gameId == activeGame!.gameId
@@ -120,7 +121,13 @@ const Strategy = () => {
                       : "blue",
                   }}
                   onClick={(e) =>
-                    updateBoard(e, game, `game ${index}`, game.gameId)
+                    updateBoard(
+                      e,
+                      game,
+                      `game ${index}`,
+                      game.gameId,
+                      game.isCompleted
+                    )
                   }
                 >
                   Game: {index}
