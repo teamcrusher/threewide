@@ -1,9 +1,8 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { env } from "../../../env/server.mjs";
 import bcrypt from "bcrypt";
-import UserModel, { UserDocument } from "src/models/user.model";
+import UserModel, { ThreeWideUser } from "src/models/user.model";
 import connectMongo from "@utils/mongoose";
 
 export const authOptions: NextAuthOptions = {
@@ -22,7 +21,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         console.log(credentials, credentials?.username, credentials?.password);
         const username: string | undefined = credentials?.username;
-        const password = credentials?.password;
+        const password: string | undefined = credentials?.password;
 
         connectMongo();
         const user = await UserModel.findOne({ username: { $eq: username } });
@@ -34,7 +33,7 @@ export const authOptions: NextAuthOptions = {
           return signUpUser(password!, username!);
         }
 
-        return signInUser(password!, user!);
+        return signInUser(password!, user!, user._id.toString());
       },
     }),
   ],
@@ -44,7 +43,8 @@ export default NextAuth(authOptions);
 
 const signInUser = async (
   password: string,
-  user: UserDocument
+  user: ThreeWideUser,
+  userId: string
 ): Promise<User> => {
   const isMatch = await bcrypt.compare(password, user.password);
   //const isMatch = password == user.password;
@@ -52,8 +52,8 @@ const signInUser = async (
   if (!isMatch) throw new Error("Pass don't match");
 
   return {
-    id: user._id?.toString()!,
-    name: user.username,
+    id: userId,
+    name: userId,
     email: "no email",
     image: "no image",
   };
@@ -75,7 +75,7 @@ const signUpUser = async (password: string, username: string): Promise<any> => {
 
   return {
     id: newUser._id,
-    name: newUser.username,
+    name: newUser._id,
     email: "no email",
     image: "no image",
   };

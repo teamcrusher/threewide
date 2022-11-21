@@ -1,10 +1,11 @@
 import mongoose, { ObjectId } from "mongoose";
 
-interface UserDocument extends mongoose.Document<ObjectId>, User {}
+interface UserDocument extends mongoose.Document<ObjectId>, ThreeWideUser {}
 
-export interface User {
+export interface ThreeWideUser {
   username: string;
   password: string;
+  userId: string;
 }
 
 const userSchema = new mongoose.Schema({
