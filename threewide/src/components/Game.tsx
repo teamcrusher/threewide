@@ -1,11 +1,10 @@
-import { StaticImageData } from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Game, Goal } from "src/models/game_description.model";
 import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
-import { boolean, number } from "zod";
-import Board from "./Board";
-import Piece from "./Piece";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Tetris from "./Tetris";
+import SettingsPage from "./Settings";
 
 export type GameProperties = {
   game: Game | undefined;
@@ -300,10 +299,11 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
         height={400}
         startingBoardState={emptyBoard}
         startingPieceQueue={[]}
-        generatePieceQueue={false}
-        playGame={false}
+        generatePieceQueue={true}
+        playGame={true}
       />
     );
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   const [points, setPoints] = useState<Points>({
     backToBackLevel: 0,
@@ -551,17 +551,29 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     else onGameWin();
   };
 
+  const onShowSettings = () => {
+    setShowSettings(true);
+  };
+  const onHideSettings = () => {
+    setShowSettings(false);
+  };
+
   return (
-    <Tetris
-      width={200}
-      height={400}
-      startingBoardState={game.startingBoardState}
-      startingPieceQueue={game.startingPieceQueue}
-      generatePieceQueue={false}
-      playGame={true}
-      onPointGained={onPointsGained}
-      onGameEnd={onGameEnd}
-    ></Tetris>
+    <div>
+      <div>TEST</div>
+      <SettingsPage showSettings={true} />
+      <Tetris
+        width={200}
+        height={300}
+        startingBoardState={game.startingBoardState}
+        startingPieceQueue={game.startingPieceQueue}
+        generatePieceQueue={false}
+        playGame={true}
+        onShowSettings={onShowSettings}
+        onPointGained={onPointsGained}
+        onGameEnd={onGameEnd}
+      />
+    </div>
   );
 };
 

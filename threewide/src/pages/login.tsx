@@ -32,7 +32,7 @@ const Login: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <style>{dom.css()}</style>
       </Head>
-      <Header />
+      <Header addHomeIcon={false} />
       <div className="p-5"></div>
       <div className="text-center text-4xl">Welcome To ThreeWide</div>
       <p className="m-3 text-center text-lg">

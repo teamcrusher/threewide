@@ -11,6 +11,8 @@ import { Game, Goal } from "src/models/game_description.model";
 import TetrisGame from "@components/Game";
 import { useSession } from "next-auth/react";
 import { UserGame } from "src/server/trpc/router/gameDescription";
+import Header from "@components/Header";
+import { dom } from "@fortawesome/fontawesome-svg-core";
 
 type ActiveGame = {
   game: Game;
@@ -63,6 +65,7 @@ const Strategy = () => {
       startingPieceQueue: [...game.startingPieceQueue],
       goal: game.goal,
       gameId: game.gameId,
+      name: game.name,
     };
 
     setGameMessage("");
@@ -82,7 +85,6 @@ const Strategy = () => {
 
     game.isAttempted = true;
     game.isCompleted = true;
-    setGameMessage("You win");
   };
 
   const onGameLose = (): void => {
@@ -96,8 +98,25 @@ const Strategy = () => {
     gameDescriptions.data!.games!.filter(
       (game) => game.gameId == activeGame!.gameId
     )[0]!.isAttempted = true;
+  };
 
-    setGameMessage("Try again");
+  const clickRandom = (
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ): void => {
+    e.preventDefault();
+    if (!gameDescriptions.data) return;
+    let randomGame =
+      gameDescriptions.data?.games![
+        Math.floor(gameDescriptions.data.games?.length! * Math.random())
+      ];
+
+    updateBoard(
+      e,
+      randomGame!,
+      randomGame?.name!,
+      randomGame?.gameId!,
+      randomGame?.isCompleted!
+    );
   };
 
   return (
@@ -105,46 +124,63 @@ const Strategy = () => {
       <Head>
         <title>Three wide {stratName}</title>
         <link rel="icon" href="/favicon.ico" />
+        <style>{dom.css()}</style>
       </Head>
+      <Header addHomeIcon={true} />
       <div className="flex w-full p-4">
-        <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500">
-          {gameDescriptions.data ? (
-            gameDescriptions.data.games?.map(
-              (game: UserGame, index: number) => (
-                <p
-                  key={`game ${index}`}
-                  style={{
-                    color: game.isCompleted
-                      ? "green"
-                      : game.isAttempted
-                      ? "yellow"
-                      : "blue",
-                  }}
-                  onClick={(e) =>
-                    updateBoard(
-                      e,
-                      game,
-                      `game ${index}`,
-                      game.gameId,
-                      game.isCompleted
-                    )
-                  }
-                >
-                  Game: {index}
-                </p>
-              )
-            )
-          ) : (
-            <p> Loading... </p>
-          )}
-        </div>
+        <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500"></div>
         <div className="ml-0 mr-auto">
+          <h1 className="mb-4 text-center text-2xl capitalize">
+            {activeGame?.gameName ?? "Practice mode"}
+          </h1>
           <TetrisGame
             key={`Active game: ${activeGame?.gameName}`}
             game={activeGame?.game}
             onGameLose={onGameLose}
             onGameWin={onGameWin}
           />
+          <div className="mt-3 grid grid-cols-3">
+            {gameDescriptions.data ? (
+              gameDescriptions.data.games?.map(
+                (game: UserGame, index: number) => (
+                  <p
+                    key={`game ${index}`}
+                    className={`mr-2 ml-2 select-none rounded-lg border-2 text-center text-white hover:cursor-pointer hover:bg-white ${
+                      game.isCompleted
+                        ? "border-green-500 bg-green-500 hover:text-green-500"
+                        : game.isAttempted
+                        ? "border-yellow-500 bg-yellow-500 hover:text-yellow-500"
+                        : "border-black bg-black hover:text-black"
+                    }`}
+                    onClick={(e) =>
+                      updateBoard(
+                        e,
+                        game,
+                        game.name,
+                        game.gameId,
+                        game.isCompleted
+                      )
+                    }
+                  >
+                    {game.name}
+                  </p>
+                )
+              )
+            ) : (
+              <p> Loading... </p>
+            )}
+          </div>
+          <div className="mt-3 grid grid-cols-3">
+            <div className="mr-2 ml-2"></div>
+            <div
+              onClick={(e) => clickRandom(e)}
+              className="mr-2 ml-2 select-none rounded-lg border-2 border-black bg-black text-center text-white hover:cursor-pointer hover:bg-white hover:text-black"
+            >
+              Random
+            </div>
+            <div className="mr-2 ml-2"></div>
+          </div>
+
           <div>{gameMessage}</div>
         </div>
       </div>

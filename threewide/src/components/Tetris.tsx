@@ -6,7 +6,9 @@ import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotati
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
 import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 
 const useDebounce = (
   val: DAS,
@@ -50,6 +52,7 @@ type TetrisProps = {
     finalBoardState: PieceType[][],
     lastPoints: Points | undefined
   ) => void;
+  onShowSettings?: () => void;
 };
 
 type HeldPiece = {
@@ -73,6 +76,7 @@ const Tetris = ({
   playGame,
   onPointGained,
   onGameEnd,
+  onShowSettings,
 }: TetrisProps) => {
   if (!playGame) {
     return (
@@ -775,8 +779,14 @@ const Tetris = ({
           />
           <Board width={width} height={height} boardState={board} />
         </div>
-        <div>
+        <div className="flex flex-col">
           <PieceQueue queue={queue} />
+          <FontAwesomeIcon
+            className="mb-0 mt-auto hover:cursor-pointer"
+            size="3x"
+            icon={faCog}
+            onClick={onShowSettings}
+          />
         </div>
       </div>
     </KeyListener>

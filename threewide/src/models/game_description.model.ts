@@ -22,6 +22,7 @@ export interface Game {
   startingPieceQueue: PieceType[];
   goal: Goal;
   gameId: string;
+  name: string;
 }
 
 const goalSchema = new mongoose.Schema({
@@ -39,6 +40,7 @@ const gameDescriptionSchema = new mongoose.Schema({
   startingBoardState: [[String]],
   startingPieceQueue: [String],
   goal: { type: goalSchema },
+  name: String,
   types: Types.ObjectId,
 });
 

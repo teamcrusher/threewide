@@ -50,6 +50,7 @@ export const gameDescriptionRouter = router({
             isCompleted: userGameResult?.isCompleted ?? false,
             isAttempted: userGameResult !== null,
             gameId: game._id.toString(),
+            name: game.name,
           };
         });
 

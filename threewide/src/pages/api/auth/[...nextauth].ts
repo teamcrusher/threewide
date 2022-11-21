@@ -54,7 +54,7 @@ const signInUser = async (
   return {
     id: userId,
     name: userId,
-    email: "no email",
+    email: user.username,
     image: "no image",
   };
 };

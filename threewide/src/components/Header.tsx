@@ -1,7 +1,27 @@
 import React from "react";
 import Logo from "../../public/logo.svg";
+import Link from "next/link";
 
-const Header = () => {
+export type HeaderProps = {
+  addHomeIcon: boolean;
+};
+
+const Header = ({ addHomeIcon }: HeaderProps) => {
+  function addHome() {
+    if (addHomeIcon) {
+      return (
+        <Link
+          className="rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:bg-white hover:text-black"
+          href={"/"}
+        >
+          Home
+        </Link>
+      );
+    } else {
+      return <></>;
+    }
+  }
+
   return (
     <div className="flex items-center border-b-4 border-black">
       <img src={Logo.src} height={150} width={150} alt="" />
@@ -16,6 +36,9 @@ const Header = () => {
           <span className="text-purple-500">e</span>
         </h1>
         <h2 className="text-2xl">Educational Tetris Platform</h2>
+      </div>
+      <div className="ml-auto mr-0 flex h-[150px] flex-col-reverse p-5">
+        {addHome()}
       </div>
     </div>
   );
