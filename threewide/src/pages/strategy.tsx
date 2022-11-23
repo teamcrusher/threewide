@@ -24,6 +24,7 @@ type ActiveGame = {
 const Strategy = () => {
   const router = useRouter();
   const session = useSession();
+  const [overlay, setOverlay] = useState(false);
 
   const [activeGame, setActiveGame] = useState<ActiveGame | undefined>();
 
@@ -119,6 +120,10 @@ const Strategy = () => {
     );
   };
 
+  const onOverlayToggle = (over: boolean) => {
+    setOverlay(over);
+  };
+
   return (
     <>
       <Head>
@@ -126,6 +131,9 @@ const Strategy = () => {
         <link rel="icon" href="/favicon.ico" />
         <style>{dom.css()}</style>
       </Head>
+      <div
+        className={overlay ? "fixed z-10 h-[100%] w-[100%] bg-black/70" : ""}
+      ></div>
       <Header addHomeIcon={true} />
       <div className="flex w-full p-4">
         <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500"></div>
@@ -138,6 +146,7 @@ const Strategy = () => {
             game={activeGame?.game}
             onGameLose={onGameLose}
             onGameWin={onGameWin}
+            onOverlayToggle={onOverlayToggle}
           />
           <div className="mt-3 grid grid-cols-3">
             {gameDescriptions.data ? (

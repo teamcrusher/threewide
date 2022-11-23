@@ -11,7 +11,7 @@ const Header = ({ addHomeIcon }: HeaderProps) => {
     if (addHomeIcon) {
       return (
         <Link
-          className="rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:bg-white hover:text-black"
+          className="z-0 rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:bg-white hover:text-black"
           href={"/"}
         >
           Home

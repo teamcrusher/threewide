@@ -10,9 +10,15 @@ export type GameProperties = {
   game: Game | undefined;
   onGameWin: () => void;
   onGameLose: () => void;
+  onOverlayToggle: (over: boolean) => void;
 };
 
-const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
+const TetrisGame = ({
+  game,
+  onGameWin,
+  onGameLose,
+  onOverlayToggle,
+}: GameProperties) => {
   const emptyBoard = [
     [
       PieceType.None,
@@ -552,7 +558,13 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   };
 
   const onShowSettings = () => {
-    setShowSettings(true);
+    if (showSettings) {
+      onOverlayToggle(false);
+      setShowSettings(false);
+    } else {
+      onOverlayToggle(true);
+      setShowSettings(true);
+    }
   };
   const onHideSettings = () => {
     setShowSettings(false);
@@ -561,10 +573,10 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   return (
     <div>
       <div>TEST</div>
-      <SettingsPage showSettings={true} />
+      <SettingsPage showSettings={showSettings} />
       <Tetris
         width={200}
-        height={300}
+        height={400}
         startingBoardState={game.startingBoardState}
         startingPieceQueue={game.startingPieceQueue}
         generatePieceQueue={false}
