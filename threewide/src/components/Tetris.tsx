@@ -9,9 +9,11 @@ import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
+import { Settings } from "./Settings";
 
 const useDebounce = (
   val: DAS,
+  dasTime: number,
   cancel: boolean,
   setCancel: (cancel: boolean) => void
 ) => {
@@ -20,7 +22,7 @@ const useDebounce = (
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (!cancel && val.direction != null && !val.enabled) {
-      timer = setTimeout(() => setDebounceVal(val), 80);
+      timer = setTimeout(() => setDebounceVal(val), dasTime);
       setCancel(false);
     }
 
@@ -41,6 +43,7 @@ type TetrisProps = {
   startingPieceQueue: PieceType[];
   generatePieceQueue: boolean;
   playGame: boolean;
+  settings: Settings;
   onPointGained?: (
     currentBoardState: PieceType[][],
     completedBoardState: PieceType[][],
@@ -74,6 +77,7 @@ const Tetris = ({
   startingPieceQueue,
   generatePieceQueue,
   playGame,
+  settings,
   onPointGained,
   onGameEnd,
   onShowSettings,
@@ -100,7 +104,12 @@ const Tetris = ({
   });
   const [cancelDAS, setCancelDAS] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState(false);
-  const deBouncedDAS = useDebounce(currentDAS, cancelDAS, setCancelDAS);
+  const deBouncedDAS = useDebounce(
+    currentDAS,
+    settings.dasAmount,
+    cancelDAS,
+    setCancelDAS
+  );
 
   useEffect(() => {
     setCurrentDAS({ direction: deBouncedDAS.direction, enabled: true });
@@ -750,6 +759,7 @@ const Tetris = ({
       onMovePieceRightHandler={onMovePieceRightHandler}
       onHardDropHandler={onHandlePlacePiece}
       onRotatePieceHandler={onHandleRotatePiece}
+      settings={settings}
     >
       <div className="mt-10 flex">
         <div className=" flex w-20 justify-center">
@@ -782,7 +792,7 @@ const Tetris = ({
         <div className="flex flex-col">
           <PieceQueue queue={queue} />
           <FontAwesomeIcon
-            className="mb-0 mt-auto hover:cursor-pointer"
+            className="border-1 mb-0 mt-auto border-red-500 hover:cursor-pointer"
             size="3x"
             icon={faCog}
             onClick={onShowSettings}

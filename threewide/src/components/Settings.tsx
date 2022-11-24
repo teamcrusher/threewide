@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { Moves } from "src/types/tetris";
 
 export type SettingsProperties = {
   showSettings: boolean;
+  onSettingsSave: (settings: Settings) => void;
+  onSettingCancel: () => void;
+  currentSettings: Settings;
 };
 
-export type Settings = {
+export type KeySettings = {
   moveLeft: string;
   moveRight: string;
   rotate90: string;
@@ -13,44 +17,73 @@ export type Settings = {
   hardDrop: string;
   softDrop: string;
   holdPiece: string;
+};
+
+interface SettingsData extends Settings {
+  isValidDas: boolean;
+}
+
+export type Settings = {
+  keySettings: KeySettings;
   dasAmount: number;
 };
 
-type Moves =
-  | "moveLeft"
-  | "moveRight"
-  | "rotate90"
-  | "rotate180"
-  | "rotate270"
-  | "holdPiece"
-  | "softDrop"
-  | "hardDrop";
-
-const SettingsPage = ({ showSettings }: SettingsProperties) => {
+const SettingsPage = ({
+  showSettings,
+  onSettingsSave,
+  onSettingCancel,
+  currentSettings,
+}: SettingsProperties) => {
   if (!showSettings) return <></>;
-
-  const defaultSettings: Settings = {
-    moveLeft: "ArrowLeft",
-    moveRight: "ArrowRight",
-    rotate180: "KeyQ",
-    rotate90: "ArrowUp",
-    rotate270: "KeyW",
-    holdPiece: "Tab",
-    softDrop: "ArrowDown",
-    hardDrop: "KeyD",
-    dasAmount: 80,
-  };
 
   const [changingSetting, setChangingSetting] = useState<Moves | undefined>();
 
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [settings, setSettings] = useState<SettingsData>({
+    keySettings: { ...currentSettings.keySettings },
+    dasAmount: currentSettings.dasAmount,
+    isValidDas: true,
+  });
 
   const setSetting = (settingName: Moves, keyCode: string) => {
     let newSettings = { ...settings };
 
-    newSettings[settingName] = keyCode;
+    newSettings.keySettings[settingName] = keyCode;
 
     setSettings(newSettings);
+  };
+
+  const posibleActions: Moves[] = [
+    "hardDrop",
+    "holdPiece",
+    "moveLeft",
+    "moveRight",
+    "rotate180",
+    "rotate270",
+    "rotate90",
+    "softDrop",
+  ];
+
+  const isValid = (settingKey: string): boolean => {
+    let moveKeyCount = 0;
+    posibleActions.forEach((move) => {
+      if (settings.keySettings[move] == settingKey) {
+        moveKeyCount += 1;
+      }
+    });
+
+    return moveKeyCount <= 1;
+  };
+
+  const isAllSettingsValid = (): boolean => {
+    if (!settings.isValidDas) return false;
+
+    for (let action in settings.keySettings) {
+      if (!isValid(settings.keySettings[action as Moves])) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const onUpdateChangingSetting = (settingType: Moves) => {
@@ -61,6 +94,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
     <div
       tabIndex={0}
       onKeyDown={(e) => {
+        e.preventDefault();
         if (changingSetting) {
           setSetting(changingSetting, e.code);
           setChangingSetting(undefined);
@@ -80,7 +114,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">MOVE PIECE LEFT</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.moveLeft}
+            settingKey={settings.keySettings.moveLeft}
             settingType="moveLeft"
             changingSetting={changingSetting}
             settings={settings}
@@ -90,7 +124,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">MOVE PIECE RIGHT</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.moveRight}
+            settingKey={settings.keySettings.moveRight}
             settingType="moveRight"
             changingSetting={changingSetting}
             settings={settings}
@@ -100,7 +134,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">SOFT DROP</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.softDrop}
+            settingKey={settings.keySettings.softDrop}
             settingType="softDrop"
             changingSetting={changingSetting}
             settings={settings}
@@ -110,7 +144,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">HARD DROP</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.hardDrop}
+            settingKey={settings.keySettings.hardDrop}
             settingType="hardDrop"
             changingSetting={changingSetting}
             settings={settings}
@@ -120,7 +154,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">ROTATE COUNTERCLOCKWISE</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.rotate270}
+            settingKey={settings.keySettings.rotate270}
             settingType="rotate270"
             changingSetting={changingSetting}
             settings={settings}
@@ -130,7 +164,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">ROTATE CLOCKWISE</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.rotate90}
+            settingKey={settings.keySettings.rotate90}
             settingType="rotate90"
             changingSetting={changingSetting}
             settings={settings}
@@ -140,7 +174,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">ROTATE 180</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.rotate180}
+            settingKey={settings.keySettings.rotate180}
             settingType="rotate180"
             changingSetting={changingSetting}
             settings={settings}
@@ -150,7 +184,7 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">SWAP HOLD PIECE</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
-            settingKey={settings.holdPiece}
+            settingKey={settings.keySettings.holdPiece}
             settingType="holdPiece"
             changingSetting={changingSetting}
             settings={settings}
@@ -163,24 +197,63 @@ const SettingsPage = ({ showSettings }: SettingsProperties) => {
           <div className="mr-10">DAS</div>
           <div className="ml-auto mr-0">
             <input
-              className="mr-1 w-6 bg-black !outline-none selection:bg-white selection:text-black hover:cursor-pointer"
+              className={`mr-1 w-64 ${
+                settings.isValidDas ? "text-white" : "text-red-500"
+              } bg-black text-right !outline-none selection:bg-white selection:text-black hover:cursor-pointer`}
               type="text"
-              defaultValue={80}
+              defaultValue={settings.dasAmount}
               onClick={(e) => {
                 e.currentTarget.select();
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+              }}
+              onChange={(e) => {
+                let newSetting = { ...settings };
+
+                if (!isNaN(e.currentTarget.value as unknown as number)) {
+                  newSetting.isValidDas = true;
+                  newSetting.dasAmount = e.currentTarget
+                    .value as unknown as number;
+                } else {
+                  newSetting.isValidDas = false;
+                }
+                setSettings(newSetting);
               }}
             />
             MS
           </div>
         </div>
         <div className="p-3"></div>
-        <div className="w-fit self-end rounded-xl border-2 pt-1 pb-1 pl-5 pr-5 hover:cursor-pointer hover:bg-white hover:text-black">
-          Save and exit
+        <div className="flex w-full">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+
+              onSettingCancel();
+            }}
+            className="w-fit justify-self-start rounded-xl border-2 pt-1 pb-1 pl-5 pr-5 hover:cursor-pointer hover:bg-white hover:text-black"
+          >
+            Cancel
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+
+              if (isAllSettingsValid()) onSettingsSave(settings);
+            }}
+            className="mr-0 ml-auto w-fit rounded-xl border-2 pt-1 pb-1 pl-5 pr-5 hover:cursor-pointer hover:bg-white hover:text-black"
+          >
+            Save and exit
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
 type KeySettingProperties = {
   changingSetting: Moves | undefined;
   onUpdateChangingSetting: (settingType: Moves) => void;
@@ -218,7 +291,7 @@ const KeySetting = ({
   const isValid = (): boolean => {
     let moveKeyCount = 0;
     posibleActions.forEach((move) => {
-      if (settings[move] == settingKey) {
+      if (settings.keySettings[move] == settingKey) {
         moveKeyCount += 1;
       }
     });

@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { UserGame } from "src/server/trpc/router/gameDescription";
 import Header from "@components/Header";
 import { dom } from "@fortawesome/fontawesome-svg-core";
+import { Settings } from "@components/Settings";
 
 type ActiveGame = {
   game: Game;
@@ -35,6 +36,22 @@ const Strategy = () => {
     name: stratName,
     userId: session.data?.user?.name!,
   });
+
+  const startingSettings: Settings = {
+    keySettings: {
+      moveLeft: "ArrowLeft",
+      moveRight: "ArrowRight",
+      rotate180: "KeyQ",
+      rotate270: "KeyW",
+      rotate90: "ArrowUp",
+      holdPiece: "Tab",
+      hardDrop: "KeyD",
+      softDrop: "ArrowDown",
+    },
+    dasAmount: 80,
+  };
+
+  const [settings, setSettings] = useState<Settings>(startingSettings);
 
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
 
@@ -124,6 +141,10 @@ const Strategy = () => {
     setOverlay(over);
   };
 
+  const onSettingsUpdateHandler = (newSettings: Settings) => {
+    setSettings(newSettings);
+  };
+
   return (
     <>
       <Head>
@@ -147,6 +168,8 @@ const Strategy = () => {
             onGameLose={onGameLose}
             onGameWin={onGameWin}
             onOverlayToggle={onOverlayToggle}
+            settings={settings}
+            onSettingsUpdate={onSettingsUpdateHandler}
           />
           <div className="mt-3 grid grid-cols-3">
             {gameDescriptions.data ? (

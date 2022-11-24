@@ -13,54 +13,28 @@ import Tetris from "@components/Tetris";
 import { PieceType } from "src/types/tetris";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 import { Session } from "next-auth";
+import { Settings } from "@components/Settings";
 
 const Home = (session: Session) => {
   const [search, setSearch] = useState<string>("");
 
   const stratagies = trpc.strategy.search.useQuery({ name: search });
 
-  const convertStringsToPieceType = (grid: string[][]): PieceType[][] => {
-    let pieceTypeGrid: PieceType[][] = [];
-
-    for (let row of grid) {
-      let pieceTypeRow: PieceType[] = [];
-
-      for (let item of row) {
-        switch (item) {
-          case "":
-            pieceTypeRow.push(PieceType.None);
-            break;
-          case "T":
-            pieceTypeRow.push(PieceType.T);
-            break;
-          case "L":
-            pieceTypeRow.push(PieceType.L);
-            break;
-          case "S":
-            pieceTypeRow.push(PieceType.S);
-            break;
-          case "Z":
-            pieceTypeRow.push(PieceType.Z);
-            break;
-          case "I":
-            pieceTypeRow.push(PieceType.I);
-            break;
-          case "O":
-            pieceTypeRow.push(PieceType.O);
-            break;
-          case "J":
-            pieceTypeRow.push(PieceType.J);
-            break;
-          default:
-            pieceTypeRow.push(PieceType.None);
-        }
-      }
-      pieceTypeGrid.push(pieceTypeRow);
-    }
-    return pieceTypeGrid;
+  const startingSettings: Settings = {
+    keySettings: {
+      moveLeft: "ArrowLeft",
+      moveRight: "ArrowRight",
+      rotate180: "KeyQ",
+      rotate270: "KeyW",
+      rotate90: "ArrowUp",
+      holdPiece: "Tab",
+      hardDrop: "KeyD",
+      softDrop: "ArrowDown",
+    },
+    dasAmount: 80,
   };
 
-  const startingBoardState: PieceType[][] = convertStringsToPieceType([
+  const startingBoardState: PieceType[][] = [
     ["", "", "", "", "", "", "", "", "", ""],
     ["", "", "", "", "", "", "", "", "", ""],
     ["", "", "", "", "", "", "", "", "", ""],
@@ -84,7 +58,7 @@ const Home = (session: Session) => {
     ["S", "S", "S", "S", "S", "S", "", "", "", ""],
     ["S", "S", "S", "S", "S", "S", "", "", "", ""],
     ["S", "S", "S", "S", "S", "S", "", "S", "S", ""],
-  ]);
+  ] as PieceType[][];
 
   const startingBoardQueue: PieceType[] = [];
 
@@ -122,6 +96,7 @@ const Home = (session: Session) => {
             startingPieceQueue={startingBoardQueue}
             generatePieceQueue={true}
             playGame={true}
+            settings={startingSettings}
           />
         </div>
       </div>

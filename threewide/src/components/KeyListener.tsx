@@ -1,5 +1,7 @@
 import React, { KeyboardEventHandler, SyntheticEvent } from "react";
 import { useState } from "react";
+import { Moves } from "src/types/tetris";
+import { Settings } from "./Settings";
 
 type Direction = "left" | "right" | null;
 
@@ -13,19 +15,9 @@ type KeyListenerEventHandlers = {
   onHoldPieceHandler: () => void;
   onSoftDropHandler: () => void;
   onRotatePieceHandler: (rotation: number) => void;
+  settings: Settings;
   children: any;
 };
-
-enum TetrisEvent {
-  moveLeft = "moveLeft",
-  moveRight = "moveRight",
-  hardDrop = "hardDrop",
-  softDrop = "softDrop",
-  rotate90 = "90Rotate",
-  rotate180 = "180Rotate",
-  rotate270 = "270Rotate",
-  holdPiece = "holdPiece",
-}
 
 const KeyListener = ({
   gameOver,
@@ -37,25 +29,22 @@ const KeyListener = ({
   onSoftDropHandler,
   onHoldPieceHandler,
   onRotatePieceHandler,
+  settings,
   children,
 }: KeyListenerEventHandlers) => {
-  const controls: { [id: string]: TetrisEvent } = {
-    ArrowLeft: TetrisEvent.moveLeft,
-    ArrowRight: TetrisEvent.moveRight,
-    KeyD: TetrisEvent.hardDrop,
-    ArrowDown: TetrisEvent.softDrop,
-    ArrowUp: TetrisEvent.rotate90,
-    KeyQ: TetrisEvent.rotate180,
-    KeyW: TetrisEvent.rotate270,
-    Tab: TetrisEvent.holdPiece,
-  };
+  const controls: { [id: string]: Moves } = Object.fromEntries(
+    Object.entries(settings.keySettings).map(
+      ([key, value]: [string, string]): [string, Moves] => [value, key as Moves]
+    )
+  );
+
   const handlers: { [id: string]: () => void } = {
     moveLeft: onMovePieceLeftHandler,
     moveRight: onMovePieceRightHandler,
     holdPiece: onHoldPieceHandler,
-    "90Rotate": () => onRotatePieceHandler(1),
-    "180Rotate": () => onRotatePieceHandler(2),
-    "270Rotate": () => onRotatePieceHandler(3),
+    rotate90: () => onRotatePieceHandler(1),
+    rotate180: () => onRotatePieceHandler(2),
+    rotate270: () => onRotatePieceHandler(3),
     softDrop: onSoftDropHandler,
     hardDrop: onHardDropHandler,
   };
@@ -80,19 +69,19 @@ const KeyListener = ({
     event.preventDefault();
     if (gameOver) return;
 
-    let move: TetrisEvent | undefined = controls[event.code];
+    let move: Moves | undefined = controls[event.code];
 
     if (move === undefined) return;
 
     if (currentActions.filter((action) => action == move).length == 0) {
-      setCurrentActions((actions: TetrisEvent[]): TetrisEvent[] => {
+      setCurrentActions((actions: Moves[]): Moves[] => {
         return [move!, ...actions];
       });
       handlers[move]!();
     }
   };
 
-  const [currentActions, setCurrentActions] = useState<TetrisEvent[]>([]);
+  const [currentActions, setCurrentActions] = useState<Moves[]>([]);
 
   return (
     <div

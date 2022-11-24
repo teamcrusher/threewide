@@ -4,13 +4,15 @@ import { Game, Goal } from "src/models/game_description.model";
 import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Tetris from "./Tetris";
-import SettingsPage from "./Settings";
+import SettingsPage, { Settings } from "./Settings";
 
 export type GameProperties = {
   game: Game | undefined;
   onGameWin: () => void;
   onGameLose: () => void;
   onOverlayToggle: (over: boolean) => void;
+  settings: Settings;
+  onSettingsUpdate: (newSettings: Settings) => void;
 };
 
 const TetrisGame = ({
@@ -18,6 +20,8 @@ const TetrisGame = ({
   onGameWin,
   onGameLose,
   onOverlayToggle,
+  settings,
+  onSettingsUpdate,
 }: GameProperties) => {
   const emptyBoard = [
     [
@@ -298,18 +302,44 @@ const TetrisGame = ({
     ],
   ];
 
+  const onSettingsSaveHandler = (newSettings: Settings) => {
+    onSettingsUpdate({ ...newSettings });
+    onOverlayToggle(false);
+    setShowSettings(false);
+  };
+
+  const onSettingCancelHandler = () => {
+    onOverlayToggle(false);
+    setShowSettings(false);
+  };
+
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const onShowSettings = () => {
+    onOverlayToggle(true);
+    setShowSettings(true);
+  };
+
   if (!game)
     return (
-      <Tetris
-        width={200}
-        height={400}
-        startingBoardState={emptyBoard}
-        startingPieceQueue={[]}
-        generatePieceQueue={true}
-        playGame={true}
-      />
+      <div>
+        <SettingsPage
+          showSettings={showSettings}
+          onSettingsSave={onSettingsSaveHandler}
+          onSettingCancel={onSettingCancelHandler}
+          currentSettings={settings}
+        />
+        <Tetris
+          width={200}
+          height={400}
+          startingBoardState={emptyBoard}
+          startingPieceQueue={[]}
+          generatePieceQueue={true}
+          onShowSettings={onShowSettings}
+          playGame={true}
+          settings={settings}
+        />
+      </div>
     );
-  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   const [points, setPoints] = useState<Points>({
     backToBackLevel: 0,
@@ -557,23 +587,14 @@ const TetrisGame = ({
     else onGameWin();
   };
 
-  const onShowSettings = () => {
-    if (showSettings) {
-      onOverlayToggle(false);
-      setShowSettings(false);
-    } else {
-      onOverlayToggle(true);
-      setShowSettings(true);
-    }
-  };
-  const onHideSettings = () => {
-    setShowSettings(false);
-  };
-
   return (
     <div>
-      <div>TEST</div>
-      <SettingsPage showSettings={showSettings} />
+      <SettingsPage
+        showSettings={showSettings}
+        onSettingsSave={onSettingsSaveHandler}
+        onSettingCancel={onSettingCancelHandler}
+        currentSettings={settings}
+      />
       <Tetris
         width={200}
         height={400}
@@ -584,6 +605,7 @@ const TetrisGame = ({
         onShowSettings={onShowSettings}
         onPointGained={onPointsGained}
         onGameEnd={onGameEnd}
+        settings={settings}
       />
     </div>
   );
