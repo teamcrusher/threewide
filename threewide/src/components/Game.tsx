@@ -13,6 +13,7 @@ export type GameProperties = {
   onOverlayToggle: (over: boolean) => void;
   settings: Settings;
   onSettingsUpdate: (newSettings: Settings) => void;
+  children?: any;
 };
 
 const TetrisGame = ({
@@ -22,6 +23,7 @@ const TetrisGame = ({
   onOverlayToggle,
   settings,
   onSettingsUpdate,
+  children,
 }: GameProperties) => {
   const emptyBoard = [
     [
@@ -337,7 +339,9 @@ const TetrisGame = ({
           onShowSettings={onShowSettings}
           playGame={true}
           settings={settings}
-        />
+        >
+          {children}
+        </Tetris>
       </div>
     );
 

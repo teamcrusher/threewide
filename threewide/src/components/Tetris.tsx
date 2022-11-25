@@ -56,6 +56,7 @@ type TetrisProps = {
     lastPoints: Points | undefined
   ) => void;
   onShowSettings?: () => void;
+  children?: any;
 };
 
 type HeldPiece = {
@@ -81,6 +82,7 @@ const Tetris = ({
   onPointGained,
   onGameEnd,
   onShowSettings,
+  children,
 }: TetrisProps) => {
   if (!playGame) {
     return (
@@ -787,7 +789,9 @@ const Tetris = ({
             pieceType={currentPiece.pieceType}
             rotation={currentPiece.pieceRotation}
           />
-          <Board width={width} height={height} boardState={board} />
+          <Board width={width} height={height} boardState={board}>
+            {children}
+          </Board>
         </div>
         <div className="flex flex-col">
           <PieceQueue queue={queue} />

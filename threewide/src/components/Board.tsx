@@ -16,9 +16,10 @@ type BoardProperties = {
   width: number;
   height: number;
   boardState: PieceType[][];
+  children?: any;
 };
 
-function Board({ width, height, boardState }: BoardProperties) {
+function Board({ width, height, boardState, children }: BoardProperties) {
   const TILE_HEIGHT = height / 20;
   const TILE_WIDTH = width / 10;
 
@@ -73,11 +74,22 @@ function Board({ width, height, boardState }: BoardProperties) {
     return boardSprites;
   }
 
+  const displayChildren = () => {
+    if (children)
+      return (
+        <div className="absolute top-[30%] w-full bg-gray-200/50">
+          {children}
+        </div>
+      );
+  };
+
   return (
     <div
       id="board"
-      className="grid-rows-20 z-0 grid min-w-min grid-cols-[repeat(10,20px)] gap-0"
+      className="grid-rows-20 relative z-0 grid min-w-min grid-cols-[repeat(10,20px)] gap-0"
     >
+      {displayChildren()}
+
       {getBoardSprites(boardState)}
     </div>
   );

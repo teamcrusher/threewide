@@ -9,6 +9,7 @@ export type SettingsProperties = {
 };
 
 export type KeySettings = {
+  _doc?: any; //hack cause the types don't inherite properly
   moveLeft: string;
   moveRight: string;
   rotate90: string;
@@ -105,7 +106,7 @@ const SettingsPage = ({
       }}
       className="absolute left-0 top-0 flex h-[100vh] w-[100vw] items-center justify-center"
     >
-      <div className="relative z-10 flex flex-col rounded-xl border-2 border-white bg-black  p-6 text-white">
+      <div className="relative z-30 flex flex-col rounded-xl border-2 border-white bg-black  p-6 text-white">
         <h1 className="text-center text-2xl">SETTINGS</h1>
         <div className="p-3"></div>
         <h1 className="text-center text-xl">CONTROLS</h1>
@@ -210,11 +211,9 @@ const SettingsPage = ({
               }}
               onChange={(e) => {
                 let newSetting = { ...settings };
-
-                if (!isNaN(e.currentTarget.value as unknown as number)) {
+                if (!isNaN(parseInt(e.currentTarget.value))) {
                   newSetting.isValidDas = true;
-                  newSetting.dasAmount = e.currentTarget
-                    .value as unknown as number;
+                  newSetting.dasAmount = parseInt(e.currentTarget.value);
                 } else {
                   newSetting.isValidDas = false;
                 }

@@ -49,7 +49,7 @@ const Piece = ({
           tileDimensions.width * getPieceSizesFromPieceType(pieceType)
         }px`,
       }}
-      className="z-3 relative"
+      className="relative z-10"
     >
       {getPiece()}
     </div>

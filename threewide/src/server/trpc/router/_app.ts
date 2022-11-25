@@ -3,6 +3,7 @@ import { authRouter } from "./auth";
 import { exampleRouter } from "./example";
 import { gameDescriptionRouter } from "./gameDescription";
 import { strategyRouter } from "./strategy";
+import { userRouter } from "./user";
 import { userGameResultRouter } from "./userGameResult";
 
 export const appRouter = router({
@@ -11,6 +12,7 @@ export const appRouter = router({
   strategy: strategyRouter,
   gameDescription: gameDescriptionRouter,
   userGameResult: userGameResultRouter,
+  user: userRouter,
 });
 
 // export type definition of API

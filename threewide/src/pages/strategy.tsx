@@ -5,7 +5,7 @@ import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import { PieceType } from "src/types/tetris";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
-import { Session } from "next-auth";
+import { Session, User } from "next-auth";
 import { useRouter } from "next/router";
 import { Game, Goal } from "src/models/game_description.model";
 import TetrisGame from "@components/Game";
@@ -14,6 +14,7 @@ import { UserGame } from "src/server/trpc/router/gameDescription";
 import Header from "@components/Header";
 import { dom } from "@fortawesome/fontawesome-svg-core";
 import { Settings } from "@components/Settings";
+import { userAgent } from "next/server";
 
 type ActiveGame = {
   game: Game;
@@ -22,9 +23,8 @@ type ActiveGame = {
   isCompleted: boolean;
 };
 
-const Strategy = () => {
+const Strategy = (user: User) => {
   const router = useRouter();
-  const session = useSession();
   const [overlay, setOverlay] = useState(false);
 
   const [activeGame, setActiveGame] = useState<ActiveGame | undefined>();
@@ -34,10 +34,10 @@ const Strategy = () => {
 
   const gameDescriptions = trpc.gameDescription.getGames.useQuery({
     name: stratName,
-    userId: session.data?.user?.name!,
+    userId: user.name!,
   });
 
-  const startingSettings: Settings = {
+  const defaultSettings: Settings = {
     keySettings: {
       moveLeft: "ArrowLeft",
       moveRight: "ArrowRight",
@@ -51,7 +51,19 @@ const Strategy = () => {
     dasAmount: 80,
   };
 
-  const [settings, setSettings] = useState<Settings>(startingSettings);
+  const userSettings = trpc.user.getUserSettings.useQuery({
+    userId: user.name,
+  });
+
+  const saveUserSettings = trpc.user.saveUserSettings.useMutation();
+
+  const [settings, setSettings] = useState<Settings | undefined>(
+    userSettings.data?.settings
+  );
+
+  if (userSettings.data && !settings) {
+    setSettings(userSettings.data.settings);
+  }
 
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
 
@@ -92,7 +104,7 @@ const Strategy = () => {
 
   const onGameWin = (): void => {
     userGameResult.mutate({
-      userId: session.data?.user?.name!,
+      userId: user.name!,
       gameId: activeGame?.gameId!,
       isCompleted: true,
     });
@@ -108,7 +120,7 @@ const Strategy = () => {
   const onGameLose = (): void => {
     if (!activeGame?.isCompleted)
       userGameResult.mutate({
-        userId: session.data?.user?.name!,
+        userId: user.name!,
         gameId: activeGame?.gameId!,
         isCompleted: false,
       });
@@ -142,18 +154,23 @@ const Strategy = () => {
   };
 
   const onSettingsUpdateHandler = (newSettings: Settings) => {
+    saveUserSettings.mutate({
+      userId: user.name,
+      settings: newSettings,
+    });
+
     setSettings(newSettings);
   };
 
   return (
     <>
       <Head>
-        <title>Three wide {stratName}</title>
+        <title>{`Threewide ${stratName}`}</title>
         <link rel="icon" href="/favicon.ico" />
         <style>{dom.css()}</style>
       </Head>
       <div
-        className={overlay ? "fixed z-10 h-[100%] w-[100%] bg-black/70" : ""}
+        className={overlay ? "fixed z-20 h-[100%] w-[100%] bg-black/70" : ""}
       ></div>
       <Header addHomeIcon={true} />
       <div className="flex w-full p-4">
@@ -168,9 +185,16 @@ const Strategy = () => {
             onGameLose={onGameLose}
             onGameWin={onGameWin}
             onOverlayToggle={onOverlayToggle}
-            settings={settings}
+            settings={settings ?? defaultSettings}
             onSettingsUpdate={onSettingsUpdateHandler}
-          />
+          >
+            {userSettings.data ? (
+              <></>
+            ) : (
+              <p className="m-2 text-center text-white">Loading settings...</p>
+            )}
+          </TetrisGame>
+
           <div className="mt-3 grid grid-cols-3">
             {gameDescriptions.data ? (
               gameDescriptions.data.games?.map(
@@ -225,15 +249,14 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const session = await getServerAuthSession(ctx);
 
-  if (!session) {
+  if (!session || !session?.user?.name) {
     return {
       redirect: { destination: "/login" },
       props: {},
     };
   }
-
   return {
-    props: {},
+    props: session.user,
   };
 };
 
