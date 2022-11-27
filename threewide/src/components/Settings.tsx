@@ -18,6 +18,7 @@ export type KeySettings = {
   hardDrop: string;
   softDrop: string;
   holdPiece: string;
+  reset: string;
 };
 
 interface SettingsData extends Settings {
@@ -62,6 +63,7 @@ const SettingsPage = ({
     "rotate270",
     "rotate90",
     "softDrop",
+    "reset",
   ];
 
   const isValid = (settingKey: string): boolean => {
@@ -187,6 +189,17 @@ const SettingsPage = ({
             onUpdateChangingSetting={onUpdateChangingSetting}
             settingKey={settings.keySettings.holdPiece}
             settingType="holdPiece"
+            changingSetting={changingSetting}
+            settings={settings}
+          />
+        </div>
+        
+        <div className="flex ">
+          <div className="mr-10">Reset</div>
+          <KeySetting
+            onUpdateChangingSetting={onUpdateChangingSetting}
+            settingKey={settings.keySettings.reset}
+            settingType="reset"
             changingSetting={changingSetting}
             settings={settings}
           />

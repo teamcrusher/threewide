@@ -42,7 +42,6 @@ type TetrisProps = {
   startingBoardState: PieceType[][];
   startingPieceQueue: PieceType[];
   generatePieceQueue: boolean;
-  playGame: boolean;
   settings: Settings;
   onPointGained?: (
     currentBoardState: PieceType[][],
@@ -77,28 +76,12 @@ const Tetris = ({
   startingBoardState,
   startingPieceQueue,
   generatePieceQueue,
-  playGame,
   settings,
   onPointGained,
   onGameEnd,
   onShowSettings,
   children,
 }: TetrisProps) => {
-  if (!playGame) {
-    return (
-      <div className="flex h-[400px]">
-        <div className=" flex w-20 justify-center"></div>
-        <div>
-          <Board
-            width={width}
-            height={height}
-            boardState={startingBoardState}
-          />
-        </div>
-        <div className=" flex w-20 justify-center"></div>
-      </div>
-    );
-  }
   const [isSoftDroping, setIsSoftDroping] = useState<boolean>(false);
   const [currentDAS, setCurrentDAS] = useState<DAS>({
     direction: null,
@@ -143,7 +126,22 @@ const Tetris = ({
     hasHeldPiece: false,
   });
 
-  const [board, setBoard] = useState<PieceType[][]>(startingBoardState);
+  const copyBoard = (board: PieceType[][]): PieceType[][] => {
+    let newBoard: PieceType[][] = [];
+
+    for (let row of board) {
+      let newRow: PieceType[] = [];
+      for (let item of row) {
+        newRow.push(item);
+      }
+      newBoard.push(newRow);
+    }
+    return newBoard;
+  };
+
+  const [board, setBoard] = useState<PieceType[][]>(
+    copyBoard(startingBoardState)
+  );
   const [queue, setQueue] = useState<PieceType[]>(startingPieceQueue.slice(1));
 
   function getPieceStartingLocationFromPieceType(
@@ -255,6 +253,27 @@ const Tetris = ({
     newQueue = fillQueue(newQueue);
     setQueue(newQueue);
     return nextPiece;
+  }
+
+  function onResetHandler() {
+    setBoard(copyBoard(startingBoardState));
+
+    let filledQueue = fillQueue(startingPieceQueue);
+    setCurrentHeldPiece({
+      pieceType: PieceType.None,
+      hasHeldPiece: false,
+    });
+
+    setCurrentPiece({
+      pieceType: filledQueue[0]!,
+      pieceLocation: getPieceStartingLocationFromPieceType(
+        filledQueue[0]!,
+        startingBoardState
+      ),
+      pieceRotation: Rotation.Zero,
+      isSlamKicked: false,
+    });
+    setQueue(filledQueue.slice(1));
   }
 
   function onHandleRotatePiece(rotation: Rotation): void {
@@ -638,7 +657,7 @@ const Tetris = ({
         clearedLines += 1;
         newBoard.unshift([...EMPTY_ROW]);
       } else {
-        newBoard.push(board[row]!);
+        newBoard.push([...board[row]!]!);
       }
     }
 
@@ -768,6 +787,7 @@ const Tetris = ({
       onMovePieceRightHandler={onMovePieceRightHandler}
       onHardDropHandler={onHandlePlacePiece}
       onRotatePieceHandler={onHandleRotatePiece}
+      onResetHandler={onResetHandler}
       settings={settings}
     >
       <div className="mt-10 flex">

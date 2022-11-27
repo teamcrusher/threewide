@@ -10,24 +10,23 @@ export interface ThreeWideUser {
   settings: Settings;
 }
 
-const userSettingsSchema = new mongoose.Schema({
-  keySettings: {
-    moveLeft: String,
-    moveRight: String,
-    holdPiece: String,
-    softDrop: String,
-    hardDrop: String,
-    rotate90: String,
-    rotate180: String,
-    rotate270: String,
-  },
-  dasAmount: Number,
-});
-
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  settings: { type: userSettingsSchema },
+  settings: {
+    keySettings: {
+      moveLeft: String,
+      moveRight: String,
+      holdPiece: String,
+      softDrop: String,
+      hardDrop: String,
+      rotate90: String,
+      rotate180: String,
+      rotate270: String,
+      reset: String,
+    },
+    dasAmount: Number,
+  },
 });
 
 const UserModel: mongoose.Model<UserDocument> =

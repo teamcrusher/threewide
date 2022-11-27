@@ -15,6 +15,7 @@ type KeyListenerEventHandlers = {
   onHoldPieceHandler: () => void;
   onSoftDropHandler: () => void;
   onRotatePieceHandler: (rotation: number) => void;
+  onResetHandler: () => void;
   settings: Settings;
   children: any;
 };
@@ -29,6 +30,7 @@ const KeyListener = ({
   onSoftDropHandler,
   onHoldPieceHandler,
   onRotatePieceHandler,
+  onResetHandler,
   settings,
   children,
 }: KeyListenerEventHandlers) => {
@@ -47,6 +49,7 @@ const KeyListener = ({
     rotate270: () => onRotatePieceHandler(3),
     softDrop: onSoftDropHandler,
     hardDrop: onHardDropHandler,
+    reset: onResetHandler,
   };
 
   const onKeyUpHandler: KeyboardEventHandler = (event) => {

@@ -47,6 +47,7 @@ const Strategy = (user: User) => {
       holdPiece: "Tab",
       hardDrop: "KeyD",
       softDrop: "ArrowDown",
+      reset: "KeyR",
     },
     dasAmount: 80,
   };
@@ -61,24 +62,16 @@ const Strategy = (user: User) => {
     userSettings.data?.settings
   );
 
-  if (userSettings.data && !userSettings.data.error && !settings) {
+  if (
+    userSettings.data &&
+    userSettings?.data.settings != null &&
+    !userSettings.data.error &&
+    !settings
+  ) {
     setSettings(userSettings.data.settings);
   }
 
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
-
-  const copyBoard = (board: PieceType[][]): PieceType[][] => {
-    let newBoard: PieceType[][] = [];
-
-    for (let row of board) {
-      let newRow: PieceType[] = [];
-      for (let item of row) {
-        newRow.push(item);
-      }
-      newBoard.push(newRow);
-    }
-    return newBoard;
-  };
 
   const updateBoard = (
     e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
@@ -91,7 +84,7 @@ const Strategy = (user: User) => {
     console.log(game.startingBoardState);
 
     let gameCopy: Game = {
-      startingBoardState: copyBoard(game.startingBoardState),
+      startingBoardState: game.startingBoardState,
       startingPieceQueue: [...game.startingPieceQueue],
       goal: game.goal,
       gameId: game.gameId,

@@ -24,7 +24,7 @@ const Header = ({ addHomeIcon }: HeaderProps) => {
 
   return (
     <div className="flex items-center border-b-4 border-black">
-      <img src={Logo.src} height={150} width={150} alt="" />
+      <img className="m-5" src={Logo.src} height={125} width={125} alt="" />
 
       <div>
         <h1 className="text-5xl">

@@ -338,7 +338,6 @@ const TetrisGame = ({
           startingPieceQueue={[]}
           generatePieceQueue={true}
           onShowSettings={onShowSettings}
-          playGame={true}
           settings={settings}
         >
           {children}
@@ -606,7 +605,6 @@ const TetrisGame = ({
         startingBoardState={game.startingBoardState}
         startingPieceQueue={game.startingPieceQueue}
         generatePieceQueue={false}
-        playGame={true}
         onShowSettings={onShowSettings}
         onPointGained={onPointsGained}
         onGameEnd={onGameEnd}

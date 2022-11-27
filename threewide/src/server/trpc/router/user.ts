@@ -26,6 +26,8 @@ export const userRouter = router({
           return { error: "User not found" };
         }
 
+        console.log(user.settings);
+
         return {
           settings: user.settings,
         };
@@ -48,6 +50,7 @@ export const userRouter = router({
             rotate90: z.string(),
             rotate180: z.string(),
             rotate270: z.string(),
+            reset: z.string(),
           }),
           dasAmount: z.number(),
         }),
@@ -56,20 +59,18 @@ export const userRouter = router({
     .mutation(async ({ input }) => {
       try {
         if (!input.userId) return;
-        console.log(input.settings, "SETTING THESE SETTINGS");
         await connectMongo();
+        console.log(input.settings);
 
-        console.log(
-          await UserModel.updateOne(
-            {
-              _id: { $eq: new Types.ObjectId(input.userId) },
+        await UserModel.updateOne(
+          {
+            _id: { $eq: new Types.ObjectId(input.userId) },
+          },
+          {
+            $set: {
+              settings: input.settings,
             },
-            {
-              $set: {
-                settings: input.settings,
-              },
-            }
-          )
+          }
         );
       } catch (err) {
         console.log(err);
