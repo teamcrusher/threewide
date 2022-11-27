@@ -1,3 +1,4 @@
+import { isError } from "@tanstack/react-query";
 import { Types } from "mongoose";
 import UserModel from "src/models/user.model";
 import { z } from "zod";
@@ -18,7 +19,7 @@ export const userRouter = router({
         await connectMongo();
 
         let user = await UserModel.findOne({
-          userId: { $eq: new Types.ObjectId(input.userId) },
+          _id: { $eq: new Types.ObjectId(input.userId) },
         });
 
         if (!user) {
@@ -26,10 +27,7 @@ export const userRouter = router({
         }
 
         return {
-          settings: {
-            keySettings: { ...user.settings.keySettings._doc },
-            dasAmount: user.settings.dasAmount,
-          },
+          settings: user.settings,
         };
       } catch (err) {
         console.log(err);

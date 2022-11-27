@@ -5,6 +5,7 @@ import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Tetris from "./Tetris";
 import SettingsPage, { Settings } from "./Settings";
+import GoalDisplay from "./Goal";
 
 export type GameProperties = {
   game: Game | undefined;
@@ -611,6 +612,7 @@ const TetrisGame = ({
         onGameEnd={onGameEnd}
         settings={settings}
       />
+      <GoalDisplay goal={game.goal} />
     </div>
   );
 };

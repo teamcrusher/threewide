@@ -189,6 +189,10 @@ const Tetris = ({
   }
 
   useEffect(() => {
+    setQueue(fillQueue(queue));
+  }, []);
+
+  function fillQueue(queue: PieceType[]): PieceType[] {
     if (generatePieceQueue && queue.length < 14) {
       let newQueue = [...queue];
 
@@ -211,9 +215,11 @@ const Tetris = ({
 
       newQueue = newQueue.concat(generateBag());
 
-      setQueue(newQueue);
+      return newQueue;
+    } else {
+      return queue;
     }
-  });
+  }
 
   function generateBag(): PieceType[] {
     let pieces: PieceType[] = [
@@ -246,6 +252,7 @@ const Tetris = ({
       newQueue = [PieceType.None];
     }
 
+    newQueue = fillQueue(newQueue);
     setQueue(newQueue);
     return nextPiece;
   }

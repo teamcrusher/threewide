@@ -13,5 +13,8 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  typescript: {
+    tsconfigPath: "./tsconfig.json",
+  },
 };
 export default config;

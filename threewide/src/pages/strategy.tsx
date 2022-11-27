@@ -61,7 +61,7 @@ const Strategy = (user: User) => {
     userSettings.data?.settings
   );
 
-  if (userSettings.data && !settings) {
+  if (userSettings.data && !userSettings.data.error && !settings) {
     setSettings(userSettings.data.settings);
   }
 
