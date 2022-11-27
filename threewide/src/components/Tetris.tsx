@@ -6,7 +6,7 @@ import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotati
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
 import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useDebounce = (
   val: DAS,
@@ -95,7 +95,7 @@ const Tetris = ({
     enabled: false,
   });
   const [cancelDAS, setCancelDAS] = useState<boolean>(false);
-
+  const [GameOver,setGameOver] = useState(false);
   const deBouncedDAS = useDebounce(currentDAS, cancelDAS, setCancelDAS);
 
   useEffect(() => {
@@ -573,6 +573,18 @@ const Tetris = ({
       ] = currentPiece.pieceType;
     }
 
+    console.log(placePieceLocation)
+    if(placePieceLocation[1] == 0){
+      setGameOver(true);
+      //setQueue([]);
+      // setCurrentPiece({
+      //   pieceType: queue[0] ?? PieceType.None,
+      //   pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, board),
+      //   pieceRotation: 0,
+      //   isSlamKicked: false,
+      // });
+      return;
+    }
     let removedYLocations = new Set<number>();
     for (let tileLocation of tileLocations) {
       let yLocationToCheck = tileLocation[1] + placePieceLocation[1];
@@ -671,6 +683,8 @@ const Tetris = ({
   const tileDimensions = { height: 20, width: 20 };
 
   return (
+    <>
+    {!GameOver ? (                                            //if GameOver is false then render this part
     <KeyListener
       onSoftDropDisable={onSoftDropDisable}
       onHoldPieceHandler={onHoldPiece}
@@ -709,10 +723,47 @@ const Tetris = ({
           />
           <Board width={width} height={height} boardState={board} />
         </div>
-
+      <div>
         <PieceQueue queue={queue} />
+        </div>
       </div>
-    </KeyListener>
+    </KeyListener>) : (                                                             //otherwise render this part 
+     <div className="flex">
+     <div className=" flex w-20 justify-center">
+       <Piece
+         location={[0, 1]}
+         tileDimensions={{ width: 15, height: 15 }}
+         texture={getTextureFromBoardStateTile(currentHeldPiece.pieceType)}
+         pieceType={currentHeldPiece.pieceType}
+         rotation={0}
+       />
+     </div>
+
+     <div>
+       <Piece
+         location={shadowPieceLocation}
+         tileDimensions={tileDimensions}
+         texture={ShadowPiece}
+         pieceType={currentPiece.pieceType}
+         rotation={currentPiece.pieceRotation}
+       />
+       <Piece
+         location={currentPiece.pieceLocation}
+         tileDimensions={tileDimensions}
+         texture={getTextureFromBoardStateTile(currentPiece.pieceType)}
+         pieceType={currentPiece.pieceType}
+         rotation={currentPiece.pieceRotation}
+       />
+       <Board width={width} height={height} boardState={board} />
+     </div>
+
+     <PieceQueue queue={queue} />
+   </div>)}
+   {
+      // here we can render the game over screen with restart or new game button using your overlay component.
+      // <Overlay>
+   }
+    </>
   );
 };
 
