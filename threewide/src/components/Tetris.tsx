@@ -95,7 +95,7 @@ const Tetris = ({
     enabled: false,
   });
   const [cancelDAS, setCancelDAS] = useState<boolean>(false);
-  const [GameOver,setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const deBouncedDAS = useDebounce(currentDAS, cancelDAS, setCancelDAS);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const Tetris = ({
     pieceType: PieceType,
     newBoard: PieceType[][]
   ): [number, number] {
-    let startingYLocation = 0;
+    let startingYLocation = -3;
 
     let startingXLocation = 3;
 
@@ -160,13 +160,14 @@ const Tetris = ({
     }
 
     if (isSoftDroping) {
-      startingYLocation = getPathFindPieceWithPieceType(
-        [0, 1],
-        [startingXLocation, 20],
-        [startingXLocation, 0],
-        pieceType,
-        newBoard
-      )[1];
+      startingYLocation =
+        getPathFindPieceWithPieceType(
+          [0, 1],
+          [startingXLocation, 23],
+          [startingXLocation, 0],
+          pieceType,
+          newBoard
+        )[1] - 3;
     }
 
     return [startingXLocation, startingYLocation];
@@ -197,7 +198,7 @@ const Tetris = ({
 
       setQueue(newQueue);
     }
-  }, []);
+  });
 
   function generateBag(): PieceType[] {
     let pieces: PieceType[] = [
@@ -348,7 +349,7 @@ const Tetris = ({
     );
 
     if (isSoftDroping) {
-      newLocation = getPathFindPiece([0, 1], [newLocation[0], 20], newLocation);
+      newLocation = getPathFindPiece([0, 1], [newLocation[0], 23], newLocation);
     }
 
     if (newLocation != currentPiece.pieceLocation) {
@@ -442,14 +443,16 @@ const Tetris = ({
         currentPiece.pieceType,
         currentPiece.pieceRotation
       );
+
     for (let tileLocation of tileLocations) {
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
-          tileLocation[1] + location[1],
+          tileLocation[1] + location[1] + 3,
         ]) ||
-        board[location[1] + tileLocation[1]]![location[0] + tileLocation[0]] !==
-          ""
+        board[location[1] + tileLocation[1] + 3]![
+          location[0] + tileLocation[0]
+        ] !== ""
       ) {
         return false;
       }
@@ -467,10 +470,35 @@ const Tetris = ({
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
-          tileLocation[1] + location[1],
+          tileLocation[1] + location[1] + 3,
         ]) ||
-        board[location[1] + tileLocation[1]]![location[0] + tileLocation[0]] !==
-          ""
+        board[location[1] + tileLocation[1] + 3]![
+          location[0] + tileLocation[0]
+        ] !== ""
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function isPieceMoveValidWithRotationAndPieceType(
+    location: [number, number],
+    rotation: Rotation,
+    pieceType: PieceType,
+    newBoard: PieceType[][]
+  ): boolean {
+    let tileLocations: [number, number][] =
+      getTileLocationsFromPieceAndRotations(pieceType, rotation);
+    for (let tileLocation of tileLocations) {
+      if (
+        locationOutOfBound([
+          tileLocation[0] + location[0],
+          tileLocation[1] + location[1] + 3,
+        ]) ||
+        newBoard[location[1] + tileLocation[1] + 3]![
+          location[0] + tileLocation[0]
+        ] !== ""
       ) {
         return false;
       }
@@ -489,9 +517,9 @@ const Tetris = ({
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
-          tileLocation[1] + location[1],
+          tileLocation[1] + location[1] + 3,
         ]) ||
-        newBoard[location[1] + tileLocation[1]]![
+        newBoard[location[1] + tileLocation[1] + 3]![
           location[0] + tileLocation[0]
         ] !== ""
       ) {
@@ -506,7 +534,7 @@ const Tetris = ({
       location[0] < 0 ||
       location[1] < 0 ||
       location[0] >= 10 ||
-      location[1] >= 20
+      location[1] >= 23
     );
   }
 
@@ -558,7 +586,7 @@ const Tetris = ({
   function onHandlePlacePiece(): void {
     let placePieceLocation: [number, number] = getPathFindPiece(
       [0, 1],
-      [currentPiece.pieceLocation[0], 20],
+      [currentPiece.pieceLocation[0], 23],
       currentPiece.pieceLocation
     );
 
@@ -568,26 +596,14 @@ const Tetris = ({
     );
 
     for (let tileLocation of tileLocations) {
-      board[tileLocation[1] + placePieceLocation[1]]![
+      board[tileLocation[1] + placePieceLocation[1] + 3]![
         tileLocation[0] + placePieceLocation[0]
       ] = currentPiece.pieceType;
     }
 
-    console.log(placePieceLocation)
-    if(placePieceLocation[1] == 0){
-      setGameOver(true);
-      //setQueue([]);
-      // setCurrentPiece({
-      //   pieceType: queue[0] ?? PieceType.None,
-      //   pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, board),
-      //   pieceRotation: 0,
-      //   isSlamKicked: false,
-      // });
-      return;
-    }
     let removedYLocations = new Set<number>();
     for (let tileLocation of tileLocations) {
-      let yLocationToCheck = tileLocation[1] + placePieceLocation[1];
+      let yLocationToCheck = tileLocation[1] + placePieceLocation[1] + 3;
       if (isRowFull(board[yLocationToCheck]!)) {
         removedYLocations.add(yLocationToCheck);
       }
@@ -595,7 +611,7 @@ const Tetris = ({
 
     let newBoard: PieceType[][] = [];
     let clearedLines = 0;
-    for (let row = 0; row < 20; row++) {
+    for (let row = 0; row < 23; row++) {
       if (removedYLocations.has(row)) {
         clearedLines += 1;
         newBoard.unshift([...EMPTY_ROW]);
@@ -625,20 +641,57 @@ const Tetris = ({
     setCurrentHeldPiece({ ...currentHeldPiece, hasHeldPiece: false });
     popPiece();
 
-    setCurrentPiece({
-      pieceType: queue[0] ?? PieceType.None,
-      pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, newBoard),
-      pieceRotation: 0,
-      isSlamKicked: false,
-    });
     if (
-      onGameEnd &&
       (queue.length == 0 || queue[0] == PieceType.None) &&
       currentHeldPiece.pieceType == PieceType.None
     ) {
-      onGameEnd(newBoard, points);
+      if (onGameEnd) onGameEnd(newBoard, points);
+      setGameOver(true);
       return;
     }
+
+    let nextStartingLocation = getPieceStartingLocationFromPieceType(
+      queue[0]!,
+      newBoard
+    );
+
+    if (
+      !isPieceMoveValidWithRotationAndPieceType(
+        nextStartingLocation,
+        Rotation.Zero,
+        queue[0]!,
+        newBoard
+      ) ||
+      !isInBoard(placePieceLocation)
+    ) {
+      if (onGameEnd) onGameEnd(newBoard, points);
+      setGameOver(true);
+      return;
+    }
+
+    setCurrentPiece({
+      pieceType: queue[0] ?? PieceType.None,
+      pieceLocation: nextStartingLocation,
+      pieceRotation: 0,
+      isSlamKicked: false,
+    });
+  }
+
+  function isInBoard(placePieceLocation: [number, number]): boolean {
+    let isInBoard = false;
+
+    let tileLocations = getTileLocationsFromPieceAndRotations(
+      currentPiece.pieceType,
+      currentPiece.pieceRotation
+    );
+
+    for (let tileLocation of tileLocations) {
+      if (tileLocation[1] + placePieceLocation[1] >= 0) {
+        isInBoard = true;
+      }
+    }
+
+    return isInBoard;
   }
 
   function onSoftDropHandler(): void {
@@ -674,7 +727,7 @@ const Tetris = ({
     return true;
   }
 
-  let shadowPieceLocation = getPathFindPiece(
+  const shadowPieceLocation = getPathFindPiece(
     [0, 1],
     [currentPiece.pieceLocation[0], 20],
     currentPiece.pieceLocation
@@ -683,9 +736,8 @@ const Tetris = ({
   const tileDimensions = { height: 20, width: 20 };
 
   return (
-    <>
-    {!GameOver ? (                                            //if GameOver is false then render this part
     <KeyListener
+      gameOver={gameOver}
       onSoftDropDisable={onSoftDropDisable}
       onHoldPieceHandler={onHoldPiece}
       onSoftDropHandler={onSoftDropHandler}
@@ -695,7 +747,7 @@ const Tetris = ({
       onHardDropHandler={onHandlePlacePiece}
       onRotatePieceHandler={onHandleRotatePiece}
     >
-      <div className="flex">
+      <div className="mt-10 flex">
         <div className=" flex w-20 justify-center">
           <Piece
             location={[0, 1]}
@@ -723,47 +775,11 @@ const Tetris = ({
           />
           <Board width={width} height={height} boardState={board} />
         </div>
-      <div>
-        <PieceQueue queue={queue} />
+        <div>
+          <PieceQueue queue={queue} />
         </div>
       </div>
-    </KeyListener>) : (                                                             //otherwise render this part 
-     <div className="flex">
-     <div className=" flex w-20 justify-center">
-       <Piece
-         location={[0, 1]}
-         tileDimensions={{ width: 15, height: 15 }}
-         texture={getTextureFromBoardStateTile(currentHeldPiece.pieceType)}
-         pieceType={currentHeldPiece.pieceType}
-         rotation={0}
-       />
-     </div>
-
-     <div>
-       <Piece
-         location={shadowPieceLocation}
-         tileDimensions={tileDimensions}
-         texture={ShadowPiece}
-         pieceType={currentPiece.pieceType}
-         rotation={currentPiece.pieceRotation}
-       />
-       <Piece
-         location={currentPiece.pieceLocation}
-         tileDimensions={tileDimensions}
-         texture={getTextureFromBoardStateTile(currentPiece.pieceType)}
-         pieceType={currentPiece.pieceType}
-         rotation={currentPiece.pieceRotation}
-       />
-       <Board width={width} height={height} boardState={board} />
-     </div>
-
-     <PieceQueue queue={queue} />
-   </div>)}
-   {
-      // here we can render the game over screen with restart or new game button using your overlay component.
-      // <Overlay>
-   }
-    </>
+    </KeyListener>
   );
 };
 

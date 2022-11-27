@@ -4,6 +4,7 @@ import { useState } from "react";
 type Direction = "left" | "right" | null;
 
 type KeyListenerEventHandlers = {
+  gameOver: boolean;
   onSoftDropDisable: () => void;
   onDasDisable: (direction: Direction) => void;
   onMovePieceLeftHandler: () => void;
@@ -27,6 +28,7 @@ enum TetrisEvent {
 }
 
 const KeyListener = ({
+  gameOver,
   onSoftDropDisable,
   onDasDisable,
   onMovePieceLeftHandler,
@@ -76,6 +78,7 @@ const KeyListener = ({
 
   const onKeyDownHandler: KeyboardEventHandler = (event) => {
     event.preventDefault();
+    if (gameOver) return;
 
     let move: TetrisEvent | undefined = controls[event.code];
 

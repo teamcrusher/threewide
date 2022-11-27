@@ -58,10 +58,11 @@ function Board({ width, height, boardState }: BoardProperties) {
     let boardSprites: JSX.Element[] = [];
 
     boardState.forEach((boardRow, posY) => {
+      if (posY < 3) return;
       boardRow.forEach((boardTile, posX) => {
         boardSprites.push(
           <BoardTile
-            key={`${posX} ${posY}`}
+            key={`${posX} ${posY - 3}`}
             tileDimensions={{ height: TILE_WIDTH, width: TILE_HEIGHT }}
             texture={getTextureFromBoardStateTile(boardTile)}
           />
