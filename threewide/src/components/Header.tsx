@@ -1,21 +1,38 @@
 import React from "react";
 import Logo from "../../public/logo.svg";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 export type HeaderProps = {
   addHomeIcon: boolean;
+  addLogOutIcon: boolean;
 };
 
-const Header = ({ addHomeIcon }: HeaderProps) => {
+const Header = ({ addHomeIcon, addLogOutIcon }: HeaderProps) => {
   function addHome() {
     if (addHomeIcon) {
       return (
         <Link
-          className="z-0 rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:bg-white hover:text-black"
+          className="z-0 rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:cursor-pointer hover:bg-white hover:text-black"
           href={"/"}
         >
           Home
         </Link>
+      );
+    } else {
+      return <></>;
+    }
+  }
+
+  function addLogOut() {
+    if (addLogOutIcon) {
+      return (
+        <div
+          className="z-0 rounded-xl border-2 border-black bg-black pl-4 pr-4 pt-1 pb-1 text-lg text-white hover:cursor-pointer hover:bg-white hover:text-black"
+          onClick={() => signOut()}
+        >
+          Log out
+        </div>
       );
     } else {
       return <></>;
@@ -38,7 +55,11 @@ const Header = ({ addHomeIcon }: HeaderProps) => {
         <h2 className="text-2xl">Educational Tetris Platform</h2>
       </div>
       <div className="ml-auto mr-0 flex h-[150px] flex-col-reverse p-5">
-        {addHome()}
+        <div className="flex">
+          {addHome()}
+          <div className="p-2"></div>
+          {addLogOut()}
+        </div>
       </div>
     </div>
   );

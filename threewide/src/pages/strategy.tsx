@@ -181,7 +181,7 @@ const Strategy = (user: User) => {
       <div
         className={overlay ? "fixed z-20 h-[100%] w-[100%] bg-black/70" : ""}
       ></div>
-      <Header addHomeIcon={true} />
+      <Header addHomeIcon={true} addLogOutIcon={true} />
       <div className="flex w-full p-4">
         <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500"></div>
         <div className="ml-0 mr-auto">

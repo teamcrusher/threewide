@@ -1,8 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { Game, Goal } from "src/models/game_description.model";
+import { Game } from "src/models/game_description.model";
 import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
-import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Tetris from "./Tetris";
 import SettingsPage, { Settings } from "./Settings";
 import GoalDisplay from "./Goal";
