@@ -426,11 +426,10 @@ const TetrisGame = ({
     cornerCount = 0;
 
     for (const cornerLocation of cornerLocations) {
-      const boardRow = board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3];
+      const boardRow = board[cornerLocation[1] + piece.pieceLocation[1] + 3];
       if (boardRow)
         if (
-          boardRow[cornerLocation[0] + piece?.pieceLocation[0]] !=
-          PieceType.None
+          boardRow[cornerLocation[0] + piece.pieceLocation[0]] != PieceType.None
         ) {
           cornerCount += 1;
         }

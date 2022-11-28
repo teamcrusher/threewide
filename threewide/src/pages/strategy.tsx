@@ -106,14 +106,14 @@ const Strategy = (user: User) => {
   };
 
   const onGameWin = (): void => {
-    userGameResult.mutate({
-      userId: user.name!,
-      gameId: activeGame?.game.gameId!,
-      isCompleted: true,
-    });
-
     if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
       return;
+
+    userGameResult.mutate({
+      userId: user.name!,
+      gameId: activeGame.game.gameId,
+      isCompleted: true,
+    });
 
     const game = gameDescriptions.data.games.filter(
       (game) => game.gameId == activeGame.game.gameId
@@ -126,14 +126,15 @@ const Strategy = (user: User) => {
   };
 
   const onGameLose = (): void => {
-    if (!activeGame?.isCompleted)
-      userGameResult.mutate({
-        userId: user.name!,
-        gameId: activeGame?.game.gameId!,
-        isCompleted: false,
-      });
     if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
       return;
+
+    if (!activeGame.isCompleted)
+      userGameResult.mutate({
+        userId: user.name!,
+        gameId: activeGame.game.gameId!,
+        isCompleted: false,
+      });
 
     const game = gameDescriptions.data.games.filter(
       (game) => game.gameId == activeGame.game.gameId
@@ -148,10 +149,10 @@ const Strategy = (user: User) => {
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ): void => {
     e.preventDefault();
-    if (!gameDescriptions.data) return;
+    if (!gameDescriptions.data || !gameDescriptions.data.games) return;
 
     let randomIndex = Math.floor(
-      gameDescriptions.data.games?.length! * Math.random()
+      gameDescriptions.data.games.length! * Math.random()
     );
 
     updateGameWith(randomIndex);

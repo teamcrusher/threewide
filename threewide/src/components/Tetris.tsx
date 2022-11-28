@@ -660,7 +660,7 @@ const Tetris = ({
       }
     }
 
-    let newBoard: PieceType[][] = [];
+    const newBoard: PieceType[][] = [];
     let clearedLines = 0;
     for (let row = 0; row < 23; row++) {
       if (removedYLocations.has(row)) {
