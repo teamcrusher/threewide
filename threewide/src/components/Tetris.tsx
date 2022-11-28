@@ -704,7 +704,6 @@ const Tetris = ({
     let points: Points | undefined;
 
     if (onPointGained && clearedLines !== 0) {
-      console.log("POINTS");
       points = onPointGained(
         board,
         newBoard,

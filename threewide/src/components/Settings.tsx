@@ -38,6 +38,9 @@ const SettingsPage = ({
   onSettingCancel,
   currentSettings,
 }: SettingsProperties) => {
+  if (!showSettings) return <></>;
+
+  /* eslint-disable */
   const [changingSetting, setChangingSetting] = useState<Moves | undefined>();
 
   const [settings, setSettings] = useState<SettingsData>({
@@ -45,8 +48,7 @@ const SettingsPage = ({
     dasAmount: currentSettings.dasAmount,
     isValidDas: true,
   });
-
-  if (!showSettings) return <></>;
+  /* eslint-enable */
 
   const setSetting = (settingName: Moves, keyCode: string) => {
     const newSettings = { ...settings };

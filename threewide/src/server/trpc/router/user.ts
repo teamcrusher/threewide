@@ -1,9 +1,27 @@
+import { Settings } from "@components/Settings";
 import { isError } from "@tanstack/react-query";
 import { Types } from "mongoose";
 import UserModel from "src/models/user.model";
 import { z } from "zod";
 import connectMongo from "../../../utils/mongoose";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
+
+const defaultUserSettings: Settings = {
+  keySettings: {
+    moveLeft: "ArrowLeft",
+    moveRight: "ArrowRight",
+    rotate180: "KeyQ",
+    rotate270: "KeyW",
+    rotate90: "ArrowUp",
+    holdPiece: "Tab",
+    hardDrop: "KeyD",
+    softDrop: "ArrowDown",
+    reset: "KeyR",
+    next: "KeyY",
+    previous: "KeyT",
+  },
+  dasAmount: 80,
+};
 
 export const userRouter = router({
   getUserSettings: publicProcedure
@@ -24,6 +42,12 @@ export const userRouter = router({
 
         if (!user) {
           return { error: "User not found" };
+        }
+
+        if (!user.settings.dasAmount) {
+          return {
+            settings: defaultUserSettings,
+          };
         }
 
         return {

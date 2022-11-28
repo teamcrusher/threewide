@@ -99,6 +99,16 @@ const Home = (user: User) => {
     setShowSettings(false);
   };
 
+  if (
+    userSettings.data &&
+    userSettings?.data.settings != null &&
+    !userSettings.data.error &&
+    !settings
+  ) {
+    console.log(userSettings.data.settings);
+    setSettings(userSettings.data.settings);
+  }
+
   return (
     <>
       <Head>
@@ -126,14 +136,14 @@ const Home = (user: User) => {
               stratagies.data.results?.map((result, index) => (
                 <Link
                   href={`/strategy?name=${result.name}`}
-                  className=" select-none rounded-lg border-2 bg-black text-center text-white hover:cursor-pointer hover:bg-white"
+                  className="select-none rounded-lg border-2 border-black bg-black text-center text-white hover:cursor-pointer hover:bg-white hover:text-black"
                   key={`result #${index}`}
                 >
                   {result.name}
                 </Link>
               ))
             ) : (
-              <p>Loading..</p>
+              <p className="text-xl">Loading..</p>
             )}
           </div>
         </div>
@@ -142,9 +152,7 @@ const Home = (user: User) => {
             showSettings={showSettings}
             onSettingsSave={onSettingsSaveHandler}
             onSettingCancel={onSettingCancelHandler}
-            currentSettings={
-              settings ?? userSettings.data?.settings ?? defaultUserSettings
-            }
+            currentSettings={settings ?? defaultUserSettings}
           />
           <Tetris
             width={200}
@@ -152,11 +160,15 @@ const Home = (user: User) => {
             startingBoardState={startingBoardState}
             startingPieceQueue={startingBoardQueue}
             generatePieceQueue={true}
-            settings={
-              settings ?? userSettings.data?.settings ?? defaultUserSettings
-            }
+            settings={settings ?? defaultUserSettings}
             onShowSettings={onShowSettingsHandler}
-          />
+          >
+            {userSettings.data ? (
+              <></>
+            ) : (
+              <p className="m-2 text-center text-white">Loading settings...</p>
+            )}
+          </Tetris>
         </div>
       </div>
     </>

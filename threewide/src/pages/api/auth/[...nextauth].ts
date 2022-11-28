@@ -19,13 +19,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        console.log(credentials, credentials?.username, credentials?.password);
         const username: string | undefined = credentials?.username;
         const password: string | undefined = credentials?.password;
 
         connectMongo();
         const user = await UserModel.findOne({ username: { $eq: username } });
-        console.log("found USER", user);
         if (!password || !username)
           return new Error("Username and password is required");
 

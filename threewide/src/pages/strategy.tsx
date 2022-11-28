@@ -93,7 +93,6 @@ const Strategy = (user: User) => {
         ? undefined
         : () => updateGameWith(index + 1);
 
-    console.log(onNextGameHandler);
     const onPreviousGameHandler =
       index == 0 ? undefined : () => updateGameWith(index - 1);
 
