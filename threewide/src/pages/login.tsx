@@ -16,7 +16,7 @@ const Login: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const signInUser = async () => {
-    let signInOptions = { redirect: false, username, password };
+    const signInOptions = { redirect: false, username, password };
     const res = await signIn("credentials", signInOptions);
     if (res?.error) {
       setErrorMessage(res.error);
@@ -36,7 +36,7 @@ const Login: NextPage = () => {
       <div className="p-5"></div>
       <div className="text-center text-4xl">Welcome To ThreeWide</div>
       <p className="m-3 text-center text-lg">
-        "Playing tetris for 15 minutes is like meditation"
+        Playing tetris for 15 minutes is like meditation
       </p>
       <div className="flex items-center justify-center">
         <div className="flex w-fit flex-col items-center justify-center">

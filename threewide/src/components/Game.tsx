@@ -328,6 +328,17 @@ const TetrisGame = ({
     setShowSettings(true);
   };
 
+  const [points, setPoints] = useState<Points>({
+    backToBackLevel: 0,
+    linesCleared: 0,
+    pointsGained: 0,
+    tspinDoubles: 0,
+    tspinSingles: 0,
+    tspinTriples: 0,
+    tspinMiniDoubles: 0,
+    tspinMinis: 0,
+  });
+
   if (!game)
     return (
       <div>
@@ -351,17 +362,6 @@ const TetrisGame = ({
       </div>
     );
 
-  const [points, setPoints] = useState<Points>({
-    backToBackLevel: 0,
-    linesCleared: 0,
-    pointsGained: 0,
-    tspinDoubles: 0,
-    tspinSingles: 0,
-    tspinTriples: 0,
-    tspinMiniDoubles: 0,
-    tspinMinis: 0,
-  });
-
   const isTspinOrMini = (
     board: PieceType[][],
     piece: TetrisPiece,
@@ -369,7 +369,7 @@ const TetrisGame = ({
   ): [boolean, boolean] => {
     if (piece.pieceType != PieceType.T) return [false, false];
 
-    let corners: [
+    const corners: [
       [number, number],
       [number, number],
       [number, number],
@@ -382,13 +382,11 @@ const TetrisGame = ({
     ];
 
     let cornerCount = 0;
-    for (let cornerLocation of corners) {
-      if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3]![
-          cornerLocation[0] + piece?.pieceLocation[0]!
-        ] != PieceType.None
-      ) {
-        cornerCount += 1;
+    for (const cornerLocation of corners) {
+      const boardRow = board[cornerLocation[1] + piece?.pieceLocation[1] + 3];
+      if (boardRow) {
+        if (boardRow[cornerLocation[0] + piece?.pieceLocation[0]])
+          cornerCount += 1;
       }
     }
 
@@ -427,14 +425,15 @@ const TetrisGame = ({
 
     cornerCount = 0;
 
-    for (let cornerLocation of cornerLocations) {
-      if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3]![
-          cornerLocation[0] + piece?.pieceLocation[0]!
-        ] != PieceType.None
-      ) {
-        cornerCount += 1;
-      }
+    for (const cornerLocation of cornerLocations) {
+      const boardRow = board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3];
+      if (boardRow)
+        if (
+          boardRow[cornerLocation[0] + piece?.pieceLocation[0]] !=
+          PieceType.None
+        ) {
+          cornerCount += 1;
+        }
     }
 
     switch (cornerCount) {
@@ -448,8 +447,8 @@ const TetrisGame = ({
   };
 
   const isAllClear = (board: PieceType[][]): boolean => {
-    for (let row of board) {
-      for (let item of row) {
+    for (const row of board) {
+      for (const item of row) {
         if (item != PieceType.None) {
           return false;
         }
@@ -491,7 +490,7 @@ const TetrisGame = ({
   ): Points => {
     let linesSent = 0;
 
-    let newPoints = { ...points };
+    const newPoints = { ...points };
 
     const [isTspinMini, isTspin] = isTspinOrMini(
       currentBoardState,
@@ -573,8 +572,8 @@ const TetrisGame = ({
     finalBoardState: PieceType[][],
     lastPoints: Points | undefined
   ): void => {
-    let finalPoints = lastPoints ?? points;
-    console.log(finalPoints, points);
+    const finalPoints = lastPoints ?? points;
+
     if (
       (game.goal.linesCleared &&
         game.goal.linesCleared != finalPoints.linesCleared) ||

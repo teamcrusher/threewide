@@ -64,7 +64,7 @@ const KeyListener = ({
   };
 
   const onKeyUpHandler: KeyboardEventHandler = (event) => {
-    let move = controls[event.code];
+    const move: Moves | undefined = controls[event.code];
 
     if (move == "moveLeft") {
       onDasDisable("left");
@@ -83,7 +83,7 @@ const KeyListener = ({
     event.preventDefault();
     event.stopPropagation();
 
-    let move: Moves | undefined = controls[event.code];
+    const move: Moves | undefined = controls[event.code];
 
     if (gameOver && move != "reset" && move != "next" && move != "previous")
       return;

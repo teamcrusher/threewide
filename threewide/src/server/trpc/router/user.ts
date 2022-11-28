@@ -18,7 +18,7 @@ export const userRouter = router({
 
         await connectMongo();
 
-        let user = await UserModel.findOne({
+        const user = await UserModel.findOne({
           _id: { $eq: new Types.ObjectId(input.userId) },
         });
 

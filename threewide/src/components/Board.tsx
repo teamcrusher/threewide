@@ -56,7 +56,7 @@ function Board({ width, height, boardState, children }: BoardProperties) {
   }
 
   function getBoardSprites(boardState: PieceType[][]) {
-    let boardSprites: JSX.Element[] = [];
+    const boardSprites: JSX.Element[] = [];
 
     boardState.forEach((boardRow, posY) => {
       if (posY < 3) return;

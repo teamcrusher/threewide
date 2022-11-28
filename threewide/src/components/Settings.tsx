@@ -38,8 +38,6 @@ const SettingsPage = ({
   onSettingCancel,
   currentSettings,
 }: SettingsProperties) => {
-  if (!showSettings) return <></>;
-
   const [changingSetting, setChangingSetting] = useState<Moves | undefined>();
 
   const [settings, setSettings] = useState<SettingsData>({
@@ -48,8 +46,10 @@ const SettingsPage = ({
     isValidDas: true,
   });
 
+  if (!showSettings) return <></>;
+
   const setSetting = (settingName: Moves, keyCode: string) => {
-    let newSettings = { ...settings };
+    const newSettings = { ...settings };
 
     newSettings.keySettings[settingName] = keyCode;
 
@@ -82,7 +82,7 @@ const SettingsPage = ({
   const isAllSettingsValid = (): boolean => {
     if (!settings.isValidDas) return false;
 
-    for (let action in settings.keySettings) {
+    for (const action in settings.keySettings) {
       if (!isValid(settings.keySettings[action as Moves])) {
         return false;
       }
@@ -247,7 +247,7 @@ const SettingsPage = ({
                 e.stopPropagation();
               }}
               onChange={(e) => {
-                let newSetting = { ...settings };
+                const newSetting = { ...settings };
                 if (!isNaN(parseInt(e.currentTarget.value))) {
                   newSetting.isValidDas = true;
                   newSetting.dasAmount = parseInt(e.currentTarget.value);

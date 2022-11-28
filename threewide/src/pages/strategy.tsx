@@ -75,7 +75,7 @@ const Strategy = (user: User) => {
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
 
   const updateGameWith = (index: number) => {
-    let game = gameDescriptions?.data?.games![index];
+    const game = gameDescriptions?.data?.games![index];
     if (!game) {
       return;
     }
@@ -112,9 +112,14 @@ const Strategy = (user: User) => {
       isCompleted: true,
     });
 
-    let game = gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.game.gameId
-    )[0]!;
+    if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
+      return;
+
+    const game = gameDescriptions.data.games.filter(
+      (game) => game.gameId == activeGame.game.gameId
+    )[0];
+
+    if (!game) return;
 
     game.isAttempted = true;
     game.isCompleted = true;
@@ -127,10 +132,16 @@ const Strategy = (user: User) => {
         gameId: activeGame?.game.gameId!,
         isCompleted: false,
       });
+    if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
+      return;
 
-    gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.game.gameId
-    )[0]!.isAttempted = true;
+    const game = gameDescriptions.data.games.filter(
+      (game) => game.gameId == activeGame.game.gameId
+    )[0];
+
+    if (!game) return;
+
+    game.isAttempted = true;
   };
 
   const clickRandom = (

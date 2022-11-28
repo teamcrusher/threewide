@@ -19,13 +19,17 @@ const listClass = " ml-5";
 
 const GoalDisplay = ({ goal }: GoalProperties) => {
   const getGoalItems = (): ReactNode[] => {
-    let goalDisplayItems: ReactNode[] = [<p className={goalClass}>Clear:</p>];
+    const goalDisplayItems: ReactNode[] = [
+      <p key="goal header" className={goalClass}>
+        Clear:
+      </p>,
+    ];
 
-    let goalDisplayList: ReactNode[] = [];
+    const goalDisplayList: ReactNode[] = [];
 
     if (goal.tspinDoubles) {
       goalDisplayList.push(
-        <li className={goalClass + listClass}>
+        <li key="goal tspin doubles" className={goalClass + listClass}>
           {goal.tspinDoubles} Tspin {pluralize(goal.tspinDoubles, "double")}
         </li>
       );
@@ -33,7 +37,7 @@ const GoalDisplay = ({ goal }: GoalProperties) => {
 
     if (goal.tspinMiniDoubles) {
       goalDisplayList.push(
-        <li className={goalClass + listClass}>
+        <li key="goal tspin mini doubles" className={goalClass + listClass}>
           {goal.tspinMiniDoubles} Tspin mini{" "}
           {pluralize(goal.tspinMiniDoubles, "double")}
         </li>
@@ -42,7 +46,7 @@ const GoalDisplay = ({ goal }: GoalProperties) => {
 
     if (goal.tspinMinis) {
       goalDisplayList.push(
-        <li className={goalClass + listClass}>
+        <li key="goal tspin minis" className={goalClass + listClass}>
           {goal.tspinMinis} Tspin {pluralize(goal.tspinMinis, "mini")}
         </li>
       );
@@ -50,7 +54,7 @@ const GoalDisplay = ({ goal }: GoalProperties) => {
 
     if (goal.tspinSingles) {
       goalDisplayList.push(
-        <li className={goalClass + listClass}>
+        <li key="goal tspin singles" className={goalClass + listClass}>
           {goal.tspinSingles} Tspin {pluralize(goal.tspinSingles, "single")}
         </li>
       );
@@ -58,7 +62,7 @@ const GoalDisplay = ({ goal }: GoalProperties) => {
 
     if (goal.tspinTriples) {
       goalDisplayList.push(
-        <li className={goalClass + listClass}>
+        <li key="goal tspin triples" className={goalClass + listClass}>
           {goal.tspinTriples} Tspin {pluralize(goal.tspinTriples, "triple")}
         </li>
       );
@@ -66,19 +70,19 @@ const GoalDisplay = ({ goal }: GoalProperties) => {
 
     if (goal.linesCleared) {
       goalDisplayList.push(
-        <li className={goalClass}>
+        <li key="goal lines cleared" className={goalClass}>
           {goal.linesCleared} {pluralize(goal.linesCleared, "line")}
         </li>
       );
     }
 
     if (goalDisplayList.length != 0) {
-      goalDisplayItems.push(<ul>{goalDisplayList}</ul>);
+      goalDisplayItems.push(<ul key="goal display list">{goalDisplayList}</ul>);
     }
 
     if (goal.pointsGained) {
       goalDisplayItems.push(
-        <p className={goalClass}>
+        <p key="goal send lines" className={goalClass}>
           Send {goal.pointsGained} {pluralize(goal.pointsGained, "line")}
         </p>
       );

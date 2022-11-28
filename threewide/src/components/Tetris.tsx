@@ -136,11 +136,11 @@ const Tetris = ({
   });
 
   const copyBoard = (board: PieceType[][]): PieceType[][] => {
-    let newBoard: PieceType[][] = [];
+    const newBoard: PieceType[][] = [];
 
-    for (let row of board) {
-      let newRow: PieceType[] = [];
-      for (let item of row) {
+    for (const row of board) {
+      const newRow: PieceType[] = [];
+      for (const item of row) {
         newRow.push(item);
       }
       newBoard.push(newRow);
@@ -205,7 +205,7 @@ const Tetris = ({
 
       newQueue = newQueue.concat(generateBag());
       if (queue.length === 0) {
-        let firstPiece = newQueue[0]!;
+        const firstPiece = newQueue[0]!;
 
         setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
           piece.pieceType = firstPiece;
@@ -229,7 +229,7 @@ const Tetris = ({
   }
 
   function generateBag(): PieceType[] {
-    let pieces: PieceType[] = [
+    const pieces: PieceType[] = [
       PieceType.T,
       PieceType.S,
       PieceType.J,
@@ -240,8 +240,8 @@ const Tetris = ({
     ];
 
     for (let i = 0; i < 7; i++) {
-      let randIndex = Math.floor(Math.random() * 7);
-      let tmp = pieces[i];
+      const randIndex = Math.floor(Math.random() * 7);
+      const tmp = pieces[i];
       pieces[i] = pieces[randIndex]!;
       pieces[randIndex] = tmp!;
     }
@@ -250,7 +250,7 @@ const Tetris = ({
   }
 
   function popPiece(): PieceType {
-    let nextPiece = queue[0]!;
+    const nextPiece = queue[0]!;
     let newQueue = queue.slice(1);
 
     if (generatePieceQueue && queue.length <= 14) {
@@ -268,7 +268,7 @@ const Tetris = ({
     if (onGameReset) onGameReset();
     setBoard(copyBoard(startingBoardState));
 
-    let filledQueue = fillQueue(startingPieceQueue);
+    const filledQueue = fillQueue(startingPieceQueue);
     setCurrentHeldPiece({
       pieceType: PieceType.None,
       hasHeldPiece: false,
@@ -288,9 +288,8 @@ const Tetris = ({
   }
 
   function onHandleRotatePiece(rotation: Rotation): void {
-    //var currentTime = new Date();
     let newLocation = currentPiece.pieceLocation;
-    let newRotation = (currentPiece.pieceRotation + rotation) % 4;
+    const newRotation = (currentPiece.pieceRotation + rotation) % 4;
 
     if (isLeftDas) {
       newLocation = getPathFindPieceWithRotation(
@@ -308,7 +307,7 @@ const Tetris = ({
       );
     }
 
-    let kickTables = getTableFromPieceAndRotation(
+    const kickTables = getTableFromPieceAndRotation(
       currentPiece.pieceType,
       currentPiece.pieceRotation,
       rotation
@@ -316,7 +315,7 @@ const Tetris = ({
 
     let isSlamKicked = false;
     for (let i = 0; i < kickTables.length; i++) {
-      let kickLocation: [number, number] = [
+      const kickLocation: [number, number] = [
         newLocation[0] + kickTables[i]![0],
         newLocation[1] + kickTables[i]![1],
       ];
@@ -490,13 +489,13 @@ const Tetris = ({
   }
 
   function isPieceMoveValid(location: [number, number]): boolean {
-    let tileLocations: [number, number][] =
+    const tileLocations: [number, number][] =
       getTileLocationsFromPieceAndRotations(
         currentPiece.pieceType,
         currentPiece.pieceRotation
       );
 
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
@@ -516,9 +515,9 @@ const Tetris = ({
     location: [number, number],
     rotation: Rotation
   ): boolean {
-    let tileLocations: [number, number][] =
+    const tileLocations: [number, number][] =
       getTileLocationsFromPieceAndRotations(currentPiece.pieceType, rotation);
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
@@ -540,9 +539,9 @@ const Tetris = ({
     pieceType: PieceType,
     newBoard: PieceType[][]
   ): boolean {
-    let tileLocations: [number, number][] =
+    const tileLocations: [number, number][] =
       getTileLocationsFromPieceAndRotations(pieceType, rotation);
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
@@ -563,9 +562,9 @@ const Tetris = ({
     pieceType: PieceType,
     newBoard: PieceType[][]
   ): boolean {
-    let tileLocations: [number, number][] =
+    const tileLocations: [number, number][] =
       getTileLocationsFromPieceAndRotations(pieceType, 0);
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       if (
         locationOutOfBound([
           tileLocation[0] + location[0],
@@ -608,7 +607,7 @@ const Tetris = ({
       });
       popPiece();
     } else {
-      let heldPiece = currentHeldPiece.pieceType;
+      const heldPiece = currentHeldPiece.pieceType;
       setCurrentHeldPiece({
         pieceType: currentPiece.pieceType,
         hasHeldPiece: true,
@@ -636,26 +635,26 @@ const Tetris = ({
   ];
 
   function onHandlePlacePiece(): void {
-    let placePieceLocation: [number, number] = getPathFindPiece(
+    const placePieceLocation: [number, number] = getPathFindPiece(
       [0, 1],
       [currentPiece.pieceLocation[0], 23],
       currentPiece.pieceLocation
     );
 
-    let tileLocations = getTileLocationsFromPieceAndRotations(
+    const tileLocations = getTileLocationsFromPieceAndRotations(
       currentPiece.pieceType,
       currentPiece.pieceRotation
     );
 
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       board[tileLocation[1] + placePieceLocation[1] + 3]![
         tileLocation[0] + placePieceLocation[0]
       ] = currentPiece.pieceType;
     }
 
-    let removedYLocations = new Set<number>();
-    for (let tileLocation of tileLocations) {
-      let yLocationToCheck = tileLocation[1] + placePieceLocation[1] + 3;
+    const removedYLocations = new Set<number>();
+    for (const tileLocation of tileLocations) {
+      const yLocationToCheck = tileLocation[1] + placePieceLocation[1] + 3;
       if (isRowFull(board[yLocationToCheck]!)) {
         removedYLocations.add(yLocationToCheck);
       }
@@ -709,7 +708,7 @@ const Tetris = ({
       return;
     }
 
-    let nextStartingLocation = getPieceStartingLocationFromPieceType(
+    const nextStartingLocation = getPieceStartingLocationFromPieceType(
       queue[0]!,
       newBoard
     );
@@ -739,12 +738,12 @@ const Tetris = ({
   function isInBoard(placePieceLocation: [number, number]): boolean {
     let isInBoard = false;
 
-    let tileLocations = getTileLocationsFromPieceAndRotations(
+    const tileLocations = getTileLocationsFromPieceAndRotations(
       currentPiece.pieceType,
       currentPiece.pieceRotation
     );
 
-    for (let tileLocation of tileLocations) {
+    for (const tileLocation of tileLocations) {
       if (tileLocation[1] + placePieceLocation[1] >= 0) {
         isInBoard = true;
       }
@@ -756,7 +755,7 @@ const Tetris = ({
   function onSoftDropHandler(): void {
     setIsSoftDroping(true);
 
-    let softDropLocation = getPathFindPiece(
+    const softDropLocation = getPathFindPiece(
       [0, 1],
       [currentPiece.pieceLocation[0], 20],
       currentPiece.pieceLocation
@@ -780,7 +779,7 @@ const Tetris = ({
   }
 
   function isRowFull(row: PieceType[]): boolean {
-    for (let tile of row) {
+    for (const tile of row) {
       if (tile === "") return false;
     }
     return true;
