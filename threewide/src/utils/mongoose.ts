@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const connectMongo = async () => {
   if (mongoose.connections[0]?.readyState ?? false) return;
 
-  mongoose.connect("mongodb://127.0.0.1:27017/test");
+  mongoose.connect(process.env.MONGODB_URI!);
 };
 
 export default connectMongo;
