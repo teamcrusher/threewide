@@ -77,7 +77,7 @@ function Board({ width, height, boardState, children }: BoardProperties) {
   const displayChildren = () => {
     if (children)
       return (
-        <div className="absolute top-[30%] w-full bg-gray-200/50">
+        <div className="absolute top-[30%] w-full bg-gray-500 text-white">
           {children}
         </div>
       );

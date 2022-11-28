@@ -1,4 +1,9 @@
-import React, { KeyboardEventHandler, SyntheticEvent } from "react";
+import React, {
+  KeyboardEventHandler,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+} from "react";
 import { useState } from "react";
 import { Moves } from "src/types/tetris";
 import { Settings } from "./Settings";
@@ -16,6 +21,8 @@ type KeyListenerEventHandlers = {
   onSoftDropHandler: () => void;
   onRotatePieceHandler: (rotation: number) => void;
   onResetHandler: () => void;
+  onNextGame?: () => void;
+  onPreviousGame?: () => void;
   settings: Settings;
   children: any;
 };
@@ -31,6 +38,8 @@ const KeyListener = ({
   onHoldPieceHandler,
   onRotatePieceHandler,
   onResetHandler,
+  onNextGame,
+  onPreviousGame,
   settings,
   children,
 }: KeyListenerEventHandlers) => {
@@ -40,7 +49,7 @@ const KeyListener = ({
     )
   );
 
-  const handlers: { [id: string]: () => void } = {
+  const handlers: { [id: string]: (() => void) | undefined } = {
     moveLeft: onMovePieceLeftHandler,
     moveRight: onMovePieceRightHandler,
     holdPiece: onHoldPieceHandler,
@@ -50,6 +59,8 @@ const KeyListener = ({
     softDrop: onSoftDropHandler,
     hardDrop: onHardDropHandler,
     reset: onResetHandler,
+    next: onNextGame,
+    previous: onPreviousGame,
   };
 
   const onKeyUpHandler: KeyboardEventHandler = (event) => {
@@ -70,26 +81,41 @@ const KeyListener = ({
 
   const onKeyDownHandler: KeyboardEventHandler = (event) => {
     event.preventDefault();
-    if (gameOver) return;
+    event.stopPropagation();
 
     let move: Moves | undefined = controls[event.code];
 
+    if (gameOver && move != "reset" && move != "next" && move != "previous")
+      return;
+
     if (move === undefined) return;
 
-    if (currentActions.filter((action) => action == move).length == 0) {
+    if (
+      currentActions.filter((action) => action == move).length == 0 &&
+      handlers![move]
+    ) {
       setCurrentActions((actions: Moves[]): Moves[] => {
         return [move!, ...actions];
       });
-      handlers[move]!();
+      handlers![move]!();
     }
   };
 
   const [currentActions, setCurrentActions] = useState<Moves[]>([]);
 
+  const listener = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (listener.current) {
+      listener.current.focus();
+    }
+  }, [listener.current]);
+
   return (
     <div
+      ref={listener}
       tabIndex={0}
-      className="key-listener"
+      className="!outline-none"
       onKeyDown={onKeyDownHandler}
       onKeyUp={onKeyUpHandler}
     >

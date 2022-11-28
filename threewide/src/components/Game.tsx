@@ -14,6 +14,8 @@ export type GameProperties = {
   onOverlayToggle: (over: boolean) => void;
   settings: Settings;
   onSettingsUpdate: (newSettings: Settings) => void;
+  onGameNext?: () => void;
+  onGamePrevious?: () => void;
   children?: any;
 };
 
@@ -24,6 +26,8 @@ const TetrisGame = ({
   onOverlayToggle,
   settings,
   onSettingsUpdate,
+  onGameNext,
+  onGamePrevious,
   children,
 }: GameProperties) => {
   const emptyBoard = [
@@ -305,6 +309,8 @@ const TetrisGame = ({
     ],
   ];
 
+  const [isWin, setIsWin] = useState(false);
+
   const onSettingsSaveHandler = (newSettings: Settings) => {
     onSettingsUpdate({ ...newSettings });
     onOverlayToggle(false);
@@ -378,7 +384,7 @@ const TetrisGame = ({
     let cornerCount = 0;
     for (let cornerLocation of corners) {
       if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]!]![
+        board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3]![
           cornerLocation[0] + piece?.pieceLocation[0]!
         ] != PieceType.None
       ) {
@@ -423,7 +429,7 @@ const TetrisGame = ({
 
     for (let cornerLocation of cornerLocations) {
       if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]!]![
+        board[cornerLocation[1]! + piece?.pieceLocation[1]! + 3]![
           cornerLocation[0] + piece?.pieceLocation[0]!
         ] != PieceType.None
       ) {
@@ -568,7 +574,7 @@ const TetrisGame = ({
     lastPoints: Points | undefined
   ): void => {
     let finalPoints = lastPoints ?? points;
-
+    console.log(finalPoints, points);
     if (
       (game.goal.linesCleared &&
         game.goal.linesCleared != finalPoints.linesCleared) ||
@@ -588,7 +594,24 @@ const TetrisGame = ({
         !isBoardEqual(game.goal.finalState!, finalBoardState))
     )
       onGameLose();
-    else onGameWin();
+    else {
+      onGameWin();
+      setIsWin(true);
+    }
+  };
+
+  const onGameResetHandler = () => {
+    setPoints({
+      backToBackLevel: 0,
+      linesCleared: 0,
+      pointsGained: 0,
+      tspinDoubles: 0,
+      tspinSingles: 0,
+      tspinTriples: 0,
+      tspinMiniDoubles: 0,
+      tspinMinis: 0,
+    });
+    setIsWin(false);
   };
 
   return (
@@ -608,6 +631,10 @@ const TetrisGame = ({
         onShowSettings={onShowSettings}
         onPointGained={onPointsGained}
         onGameEnd={onGameEnd}
+        onGameNext={onGameNext}
+        onGamePrevious={onGamePrevious}
+        onGameReset={onGameResetHandler}
+        isWin={isWin}
         settings={settings}
       />
       <GoalDisplay goal={game.goal} />

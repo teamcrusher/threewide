@@ -24,6 +24,8 @@ const userSchema = new mongoose.Schema({
       rotate180: String,
       rotate270: String,
       reset: String,
+      next: String,
+      previous: String,
     },
     dasAmount: Number,
   },

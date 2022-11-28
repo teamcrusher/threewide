@@ -19,6 +19,8 @@ export type KeySettings = {
   softDrop: string;
   holdPiece: string;
   reset: string;
+  next: string;
+  previous: string;
 };
 
 interface SettingsData extends Settings {
@@ -193,13 +195,35 @@ const SettingsPage = ({
             settings={settings}
           />
         </div>
-        
+
         <div className="flex ">
-          <div className="mr-10">Reset</div>
+          <div className="mr-10">RESET</div>
           <KeySetting
             onUpdateChangingSetting={onUpdateChangingSetting}
             settingKey={settings.keySettings.reset}
             settingType="reset"
+            changingSetting={changingSetting}
+            settings={settings}
+          />
+        </div>
+
+        <div className="flex ">
+          <div className="mr-10">NEXT GAME</div>
+          <KeySetting
+            onUpdateChangingSetting={onUpdateChangingSetting}
+            settingKey={settings.keySettings.next}
+            settingType="next"
+            changingSetting={changingSetting}
+            settings={settings}
+          />
+        </div>
+
+        <div className="flex ">
+          <div className="mr-10">PREVIOUS GAME</div>
+          <KeySetting
+            onUpdateChangingSetting={onUpdateChangingSetting}
+            settingKey={settings.keySettings.previous}
+            settingType="previous"
             changingSetting={changingSetting}
             settings={settings}
           />

@@ -27,7 +27,9 @@ export type Moves =
   | "holdPiece"
   | "softDrop"
   | "hardDrop"
-  | "reset";
+  | "reset"
+  | "previous"
+  | "next";
 
 export type TetrisPiece = {
   pieceType: PieceType;

@@ -30,6 +30,9 @@ const Home = (session: Session) => {
       holdPiece: "Tab",
       hardDrop: "KeyD",
       softDrop: "ArrowDown",
+      reset: "KeyR",
+      next: "KeyY",
+      previous: "KeyT",
     },
     dasAmount: 80,
   };
@@ -95,7 +98,6 @@ const Home = (session: Session) => {
             startingBoardState={startingBoardState}
             startingPieceQueue={startingBoardQueue}
             generatePieceQueue={true}
-            playGame={true}
             settings={startingSettings}
           />
         </div>

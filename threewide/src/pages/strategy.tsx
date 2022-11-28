@@ -18,9 +18,9 @@ import { userAgent } from "next/server";
 
 type ActiveGame = {
   game: Game;
-  gameName: string;
-  gameId: string;
   isCompleted: boolean;
+  onNextGameHandler?: () => void;
+  onPreviousGameHandler?: () => void;
 };
 
 const Strategy = (user: User) => {
@@ -30,7 +30,6 @@ const Strategy = (user: User) => {
   const [activeGame, setActiveGame] = useState<ActiveGame | undefined>();
 
   const stratName: string = router.query.name as string;
-  const [gameMessage, setGameMessage] = useState<string>("");
 
   const gameDescriptions = trpc.gameDescription.getGames.useQuery({
     name: stratName,
@@ -48,6 +47,8 @@ const Strategy = (user: User) => {
       hardDrop: "KeyD",
       softDrop: "ArrowDown",
       reset: "KeyR",
+      next: "KeyY",
+      previous: "KeyT",
     },
     dasAmount: 80,
   };
@@ -73,17 +74,13 @@ const Strategy = (user: User) => {
 
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
 
-  const updateBoard = (
-    e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
-    game: Game,
-    gameName: string,
-    gameId: string,
-    isCompleted: boolean
-  ): void => {
-    e.preventDefault();
-    console.log(game.startingBoardState);
+  const updateGameWith = (index: number) => {
+    let game = gameDescriptions?.data?.games![index];
+    if (!game) {
+      return;
+    }
 
-    let gameCopy: Game = {
+    const gameCopy: Game = {
       startingBoardState: game.startingBoardState,
       startingPieceQueue: [...game.startingPieceQueue],
       goal: game.goal,
@@ -91,19 +88,32 @@ const Strategy = (user: User) => {
       name: game.name,
     };
 
-    setGameMessage("");
-    setActiveGame({ game: gameCopy, gameName, gameId, isCompleted });
+    const onNextGameHandler =
+      index + 1 == (gameDescriptions.data?.games?.length ?? 0)
+        ? undefined
+        : () => updateGameWith(index + 1);
+
+    console.log(onNextGameHandler);
+    const onPreviousGameHandler =
+      index == 0 ? undefined : () => updateGameWith(index - 1);
+
+    setActiveGame({
+      game: gameCopy,
+      isCompleted: game.isCompleted,
+      onNextGameHandler,
+      onPreviousGameHandler,
+    });
   };
 
   const onGameWin = (): void => {
     userGameResult.mutate({
       userId: user.name!,
-      gameId: activeGame?.gameId!,
+      gameId: activeGame?.game.gameId!,
       isCompleted: true,
     });
 
     let game = gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.gameId
+      (game) => game.gameId == activeGame!.game.gameId
     )[0]!;
 
     game.isAttempted = true;
@@ -114,12 +124,12 @@ const Strategy = (user: User) => {
     if (!activeGame?.isCompleted)
       userGameResult.mutate({
         userId: user.name!,
-        gameId: activeGame?.gameId!,
+        gameId: activeGame?.game.gameId!,
         isCompleted: false,
       });
 
     gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.gameId
+      (game) => game.gameId == activeGame!.game.gameId
     )[0]!.isAttempted = true;
   };
 
@@ -128,18 +138,12 @@ const Strategy = (user: User) => {
   ): void => {
     e.preventDefault();
     if (!gameDescriptions.data) return;
-    let randomGame =
-      gameDescriptions.data?.games![
-        Math.floor(gameDescriptions.data.games?.length! * Math.random())
-      ];
 
-    updateBoard(
-      e,
-      randomGame!,
-      randomGame?.name!,
-      randomGame?.gameId!,
-      randomGame?.isCompleted!
+    let randomIndex = Math.floor(
+      gameDescriptions.data.games?.length! * Math.random()
     );
+
+    updateGameWith(randomIndex);
   };
 
   const onOverlayToggle = (over: boolean) => {
@@ -170,16 +174,18 @@ const Strategy = (user: User) => {
         <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500"></div>
         <div className="ml-0 mr-auto">
           <h1 className="mb-4 text-center text-2xl capitalize">
-            {activeGame?.gameName ?? "Practice mode"}
+            {activeGame?.game.name ?? "Practice mode"}
           </h1>
           <TetrisGame
-            key={`Active game: ${activeGame?.gameName}`}
+            key={`Active game: ${activeGame?.game.name}`}
             game={activeGame?.game}
             onGameLose={onGameLose}
             onGameWin={onGameWin}
             onOverlayToggle={onOverlayToggle}
             settings={settings ?? defaultSettings}
             onSettingsUpdate={onSettingsUpdateHandler}
+            onGameNext={activeGame?.onNextGameHandler}
+            onGamePrevious={activeGame?.onPreviousGameHandler}
           >
             {userSettings.data ? (
               <></>
@@ -201,15 +207,10 @@ const Strategy = (user: User) => {
                         ? "border-yellow-500 bg-yellow-500 hover:text-yellow-500"
                         : "border-black bg-black hover:text-black"
                     }`}
-                    onClick={(e) =>
-                      updateBoard(
-                        e,
-                        game,
-                        game.name,
-                        game.gameId,
-                        game.isCompleted
-                      )
-                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      updateGameWith(index);
+                    }}
                   >
                     {game.name}
                   </p>
@@ -229,8 +230,6 @@ const Strategy = (user: User) => {
             </div>
             <div className="mr-2 ml-2"></div>
           </div>
-
-          <div>{gameMessage}</div>
         </div>
       </div>
     </>

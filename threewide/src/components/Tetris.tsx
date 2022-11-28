@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { Settings } from "./Settings";
+import EndGame from "./EndGame";
 
 const useDebounce = (
   val: DAS,
@@ -55,6 +56,10 @@ type TetrisProps = {
     lastPoints: Points | undefined
   ) => void;
   onShowSettings?: () => void;
+  onGameNext?: () => void;
+  onGamePrevious?: () => void;
+  onGameReset?: () => void;
+  isWin?: boolean;
   children?: any;
 };
 
@@ -80,6 +85,10 @@ const Tetris = ({
   onPointGained,
   onGameEnd,
   onShowSettings,
+  onGameNext,
+  onGamePrevious,
+  onGameReset,
+  isWin = false,
   children,
 }: TetrisProps) => {
   const [isSoftDroping, setIsSoftDroping] = useState<boolean>(false);
@@ -256,6 +265,7 @@ const Tetris = ({
   }
 
   function onResetHandler() {
+    if (onGameReset) onGameReset();
     setBoard(copyBoard(startingBoardState));
 
     let filledQueue = fillQueue(startingPieceQueue);
@@ -274,6 +284,7 @@ const Tetris = ({
       isSlamKicked: false,
     });
     setQueue(filledQueue.slice(1));
+    setGameOver(false);
   }
 
   function onHandleRotatePiece(rotation: Rotation): void {
@@ -664,6 +675,7 @@ const Tetris = ({
     let points: Points | undefined;
 
     if (onPointGained && clearedLines !== 0) {
+      console.log("POINTS");
       points = onPointGained(
         board,
         newBoard,
@@ -688,6 +700,12 @@ const Tetris = ({
     ) {
       if (onGameEnd) onGameEnd(newBoard, points);
       setGameOver(true);
+      setCurrentPiece({
+        pieceType: queue[0] ?? PieceType.None,
+        pieceLocation: [0, 0],
+        pieceRotation: 0,
+        isSlamKicked: false,
+      });
       return;
     }
 
@@ -788,9 +806,11 @@ const Tetris = ({
       onHardDropHandler={onHandlePlacePiece}
       onRotatePieceHandler={onHandleRotatePiece}
       onResetHandler={onResetHandler}
+      onNextGame={onGameNext}
+      onPreviousGame={onGamePrevious}
       settings={settings}
     >
-      <div className="mt-10 flex">
+      <div className="mt-20 flex">
         <div className=" flex w-20 justify-center">
           <Piece
             location={[0, 1]}
@@ -818,6 +838,13 @@ const Tetris = ({
           />
           <Board width={width} height={height} boardState={board}>
             {children}
+            <EndGame
+              onGameReset={onResetHandler}
+              onNextGame={onGameNext}
+              onPreviousGame={onGamePrevious}
+              isWin={isWin}
+              gameOver={gameOver}
+            />
           </Board>
         </div>
         <div className="flex flex-col">
