@@ -151,7 +151,7 @@ const Strategy = (user: User) => {
     e.preventDefault();
     if (!gameDescriptions.data || !gameDescriptions.data.games) return;
 
-    let randomIndex = Math.floor(
+    const randomIndex = Math.floor(
       gameDescriptions.data.games.length! * Math.random()
     );
 
