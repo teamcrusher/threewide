@@ -47,9 +47,9 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
   }
 
   function getPieceQueue(q: PieceType[]) {
-    let pieces = [];
+    const pieces = [];
     let index = 0;
-    for (let queueElement of q) {
+    for (const queueElement of q) {
       pieces.push(
         <Piece
           key={`piece queue - ${index}`}

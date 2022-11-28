@@ -32,8 +32,8 @@ export const gameDescriptionRouter = router({
           },
         });
 
-        let userGames: Promise<UserGame>[] = games.map(async (game) => {
-          let userGameResult: UserGameResultDocument | null =
+        const userGames: Promise<UserGame>[] = games.map(async (game) => {
+          const userGameResult: UserGameResultDocument | null =
             await UserGameResultModel.findOne({
               userId: {
                 $eq: new Types.ObjectId(input.userId),
@@ -50,6 +50,7 @@ export const gameDescriptionRouter = router({
             isCompleted: userGameResult?.isCompleted ?? false,
             isAttempted: userGameResult !== null,
             gameId: game._id.toString(),
+            name: game.name,
           };
         });
 

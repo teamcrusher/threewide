@@ -1,5 +1,12 @@
-import React, { KeyboardEventHandler, SyntheticEvent } from "react";
+import React, {
+  KeyboardEventHandler,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+} from "react";
 import { useState } from "react";
+import { Moves } from "src/types/tetris";
+import { Settings } from "./Settings";
 
 type Direction = "left" | "right" | null;
 
@@ -13,19 +20,12 @@ type KeyListenerEventHandlers = {
   onHoldPieceHandler: () => void;
   onSoftDropHandler: () => void;
   onRotatePieceHandler: (rotation: number) => void;
+  onResetHandler: () => void;
+  onNextGame?: () => void;
+  onPreviousGame?: () => void;
+  settings: Settings;
   children: any;
 };
-
-enum TetrisEvent {
-  moveLeft = "moveLeft",
-  moveRight = "moveRight",
-  hardDrop = "hardDrop",
-  softDrop = "softDrop",
-  rotate90 = "90Rotate",
-  rotate180 = "180Rotate",
-  rotate270 = "270Rotate",
-  holdPiece = "holdPiece",
-}
 
 const KeyListener = ({
   gameOver,
@@ -37,31 +37,34 @@ const KeyListener = ({
   onSoftDropHandler,
   onHoldPieceHandler,
   onRotatePieceHandler,
+  onResetHandler,
+  onNextGame,
+  onPreviousGame,
+  settings,
   children,
 }: KeyListenerEventHandlers) => {
-  const controls: { [id: string]: TetrisEvent } = {
-    ArrowLeft: TetrisEvent.moveLeft,
-    ArrowRight: TetrisEvent.moveRight,
-    KeyD: TetrisEvent.hardDrop,
-    ArrowDown: TetrisEvent.softDrop,
-    ArrowUp: TetrisEvent.rotate90,
-    KeyQ: TetrisEvent.rotate180,
-    KeyW: TetrisEvent.rotate270,
-    Tab: TetrisEvent.holdPiece,
-  };
-  const handlers: { [id: string]: () => void } = {
+  const controls: { [id: string]: Moves } = Object.fromEntries(
+    Object.entries(settings.keySettings).map(
+      ([key, value]: [string, string]): [string, Moves] => [value, key as Moves]
+    )
+  );
+
+  const handlers: { [id: string]: (() => void) | undefined } = {
     moveLeft: onMovePieceLeftHandler,
     moveRight: onMovePieceRightHandler,
     holdPiece: onHoldPieceHandler,
-    "90Rotate": () => onRotatePieceHandler(1),
-    "180Rotate": () => onRotatePieceHandler(2),
-    "270Rotate": () => onRotatePieceHandler(3),
+    rotate90: () => onRotatePieceHandler(1),
+    rotate180: () => onRotatePieceHandler(2),
+    rotate270: () => onRotatePieceHandler(3),
     softDrop: onSoftDropHandler,
     hardDrop: onHardDropHandler,
+    reset: onResetHandler,
+    next: onNextGame,
+    previous: onPreviousGame,
   };
 
   const onKeyUpHandler: KeyboardEventHandler = (event) => {
-    let move = controls[event.code];
+    const move: Moves | undefined = controls[event.code];
 
     if (move == "moveLeft") {
       onDasDisable("left");
@@ -78,26 +81,41 @@ const KeyListener = ({
 
   const onKeyDownHandler: KeyboardEventHandler = (event) => {
     event.preventDefault();
-    if (gameOver) return;
+    event.stopPropagation();
 
-    let move: TetrisEvent | undefined = controls[event.code];
+    const move: Moves | undefined = controls[event.code];
+
+    if (gameOver && move != "reset" && move != "next" && move != "previous")
+      return;
 
     if (move === undefined) return;
 
-    if (currentActions.filter((action) => action == move).length == 0) {
-      setCurrentActions((actions: TetrisEvent[]): TetrisEvent[] => {
+    if (
+      currentActions.filter((action) => action == move).length == 0 &&
+      handlers![move]
+    ) {
+      setCurrentActions((actions: Moves[]): Moves[] => {
         return [move!, ...actions];
       });
-      handlers[move]!();
+      handlers![move]!();
     }
   };
 
-  const [currentActions, setCurrentActions] = useState<TetrisEvent[]>([]);
+  const [currentActions, setCurrentActions] = useState<Moves[]>([]);
+
+  const listener = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (listener.current) {
+      listener.current.focus();
+    }
+  }, [listener.current]);
 
   return (
     <div
+      ref={listener}
       tabIndex={0}
-      className="key-listener"
+      className="!outline-none"
       onKeyDown={onKeyDownHandler}
       onKeyUp={onKeyUpHandler}
     >

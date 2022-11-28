@@ -5,147 +5,242 @@ import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import { PieceType } from "src/types/tetris";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
-import { Session } from "next-auth";
+import { Session, User } from "next-auth";
 import { useRouter } from "next/router";
 import { Game, Goal } from "src/models/game_description.model";
 import TetrisGame from "@components/Game";
 import { useSession } from "next-auth/react";
 import { UserGame } from "src/server/trpc/router/gameDescription";
+import Header from "@components/Header";
+import { dom } from "@fortawesome/fontawesome-svg-core";
+import { Settings } from "@components/Settings";
+import { userAgent } from "next/server";
 
 type ActiveGame = {
   game: Game;
-  gameName: string;
-  gameId: string;
   isCompleted: boolean;
+  onNextGameHandler?: () => void;
+  onPreviousGameHandler?: () => void;
 };
 
-const Strategy = () => {
+const Strategy = (user: User) => {
   const router = useRouter();
-  const session = useSession();
+  const [overlay, setOverlay] = useState(false);
 
   const [activeGame, setActiveGame] = useState<ActiveGame | undefined>();
 
   const stratName: string = router.query.name as string;
-  const [gameMessage, setGameMessage] = useState<string>("");
 
   const gameDescriptions = trpc.gameDescription.getGames.useQuery({
     name: stratName,
-    userId: session.data?.user?.name!,
+    userId: user.name!,
   });
+
+  const defaultSettings: Settings = {
+    keySettings: {
+      moveLeft: "ArrowLeft",
+      moveRight: "ArrowRight",
+      rotate180: "KeyQ",
+      rotate270: "KeyW",
+      rotate90: "ArrowUp",
+      holdPiece: "Tab",
+      hardDrop: "KeyD",
+      softDrop: "ArrowDown",
+      reset: "KeyR",
+      next: "KeyY",
+      previous: "KeyT",
+    },
+    dasAmount: 80,
+  };
+
+  const userSettings = trpc.user.getUserSettings.useQuery({
+    userId: user.name,
+  });
+
+  const saveUserSettings = trpc.user.saveUserSettings.useMutation();
+
+  const [settings, setSettings] = useState<Settings | undefined>(
+    userSettings.data?.settings
+  );
+
+  if (
+    userSettings.data &&
+    userSettings?.data.settings != null &&
+    !userSettings.data.error &&
+    !settings
+  ) {
+    setSettings(userSettings.data.settings);
+  }
 
   const userGameResult = trpc.userGameResult.createUserGameResult.useMutation();
 
-  const copyBoard = (board: PieceType[][]): PieceType[][] => {
-    let newBoard: PieceType[][] = [];
-
-    for (let row of board) {
-      let newRow: PieceType[] = [];
-      for (let item of row) {
-        newRow.push(item);
-      }
-      newBoard.push(newRow);
+  const updateGameWith = (index: number) => {
+    const game = gameDescriptions?.data?.games![index];
+    if (!game) {
+      return;
     }
-    return newBoard;
-  };
 
-  const updateBoard = (
-    e: MouseEvent<HTMLParagraphElement, globalThis.MouseEvent>,
-    game: Game,
-    gameName: string,
-    gameId: string,
-    isCompleted: boolean
-  ): void => {
-    e.preventDefault();
-    console.log(game.startingBoardState);
-
-    let gameCopy: Game = {
-      startingBoardState: copyBoard(game.startingBoardState),
+    const gameCopy: Game = {
+      startingBoardState: game.startingBoardState,
       startingPieceQueue: [...game.startingPieceQueue],
       goal: game.goal,
       gameId: game.gameId,
+      name: game.name,
     };
 
-    setGameMessage("");
-    setActiveGame({ game: gameCopy, gameName, gameId, isCompleted });
+    const onNextGameHandler =
+      index + 1 == (gameDescriptions.data?.games?.length ?? 0)
+        ? undefined
+        : () => updateGameWith(index + 1);
+
+    const onPreviousGameHandler =
+      index == 0 ? undefined : () => updateGameWith(index - 1);
+
+    setActiveGame({
+      game: gameCopy,
+      isCompleted: game.isCompleted,
+      onNextGameHandler,
+      onPreviousGameHandler,
+    });
   };
 
   const onGameWin = (): void => {
+    if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
+      return;
+
     userGameResult.mutate({
-      userId: session.data?.user?.name!,
-      gameId: activeGame?.gameId!,
+      userId: user.name!,
+      gameId: activeGame.game.gameId,
       isCompleted: true,
     });
 
-    let game = gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.gameId
-    )[0]!;
+    const game = gameDescriptions.data.games.filter(
+      (game) => game.gameId == activeGame.game.gameId
+    )[0];
+
+    if (!game) return;
 
     game.isAttempted = true;
     game.isCompleted = true;
-    setGameMessage("You win");
   };
 
   const onGameLose = (): void => {
-    if (!activeGame?.isCompleted)
+    if (!gameDescriptions.data || !activeGame || !gameDescriptions.data.games)
+      return;
+
+    if (!activeGame.isCompleted)
       userGameResult.mutate({
-        userId: session.data?.user?.name!,
-        gameId: activeGame?.gameId!,
+        userId: user.name!,
+        gameId: activeGame.game.gameId!,
         isCompleted: false,
       });
 
-    gameDescriptions.data!.games!.filter(
-      (game) => game.gameId == activeGame!.gameId
-    )[0]!.isAttempted = true;
+    const game = gameDescriptions.data.games.filter(
+      (game) => game.gameId == activeGame.game.gameId
+    )[0];
 
-    setGameMessage("Try again");
+    if (!game) return;
+
+    game.isAttempted = true;
+  };
+
+  const clickRandom = (
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ): void => {
+    e.preventDefault();
+    if (!gameDescriptions.data || !gameDescriptions.data.games) return;
+
+    const randomIndex = Math.floor(
+      gameDescriptions.data.games.length! * Math.random()
+    );
+
+    updateGameWith(randomIndex);
+  };
+
+  const onOverlayToggle = (over: boolean) => {
+    setOverlay(over);
+  };
+
+  const onSettingsUpdateHandler = (newSettings: Settings) => {
+    saveUserSettings.mutate({
+      userId: user.name,
+      settings: newSettings,
+    });
+
+    setSettings(newSettings);
   };
 
   return (
     <>
       <Head>
-        <title>Three wide {stratName}</title>
+        <title>{`Threewide ${stratName}`}</title>
         <link rel="icon" href="/favicon.ico" />
+        <style>{dom.css()}</style>
       </Head>
+      <div
+        className={overlay ? "fixed z-20 h-[100%] w-[100%] bg-black/70" : ""}
+      ></div>
+      <Header addHomeIcon={true} addLogOutIcon={true} />
       <div className="flex w-full p-4">
-        <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500">
-          {gameDescriptions.data ? (
-            gameDescriptions.data.games?.map(
-              (game: UserGame, index: number) => (
-                <p
-                  key={`game ${index}`}
-                  style={{
-                    color: game.isCompleted
-                      ? "green"
-                      : game.isAttempted
-                      ? "yellow"
-                      : "blue",
-                  }}
-                  onClick={(e) =>
-                    updateBoard(
-                      e,
-                      game,
-                      `game ${index}`,
-                      game.gameId,
-                      game.isCompleted
-                    )
-                  }
-                >
-                  Game: {index}
-                </p>
-              )
-            )
-          ) : (
-            <p> Loading... </p>
-          )}
-        </div>
+        <div className="flex w-full flex-col justify-start pt-6 text-2xl text-blue-500"></div>
         <div className="ml-0 mr-auto">
+          <h1 className="mb-4 text-center text-2xl capitalize">
+            {activeGame?.game.name ?? "Practice mode"}
+          </h1>
           <TetrisGame
-            key={`Active game: ${activeGame?.gameName}`}
+            key={`Active game: ${activeGame?.game.name}`}
             game={activeGame?.game}
             onGameLose={onGameLose}
             onGameWin={onGameWin}
-          />
-          <div>{gameMessage}</div>
+            onOverlayToggle={onOverlayToggle}
+            settings={settings ?? defaultSettings}
+            onSettingsUpdate={onSettingsUpdateHandler}
+            onGameNext={activeGame?.onNextGameHandler}
+            onGamePrevious={activeGame?.onPreviousGameHandler}
+          >
+            {userSettings.data ? (
+              <></>
+            ) : (
+              <p className="m-2 text-center text-white">Loading settings...</p>
+            )}
+          </TetrisGame>
+
+          <div className="mt-3 grid grid-cols-3">
+            {gameDescriptions.data ? (
+              gameDescriptions.data.games?.map(
+                (game: UserGame, index: number) => (
+                  <p
+                    key={`game ${index}`}
+                    className={`mr-2 ml-2 select-none rounded-lg border-2 text-center text-white hover:cursor-pointer hover:bg-white ${
+                      game.isCompleted
+                        ? "border-green-500 bg-green-500 hover:text-green-500"
+                        : game.isAttempted
+                        ? "border-yellow-500 bg-yellow-500 hover:text-yellow-500"
+                        : "border-black bg-black hover:text-black"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      updateGameWith(index);
+                    }}
+                  >
+                    {game.name}
+                  </p>
+                )
+              )
+            ) : (
+              <p> Loading... </p>
+            )}
+          </div>
+          <div className="mt-3 grid grid-cols-3">
+            <div className="mr-2 ml-2"></div>
+            <div
+              onClick={(e) => clickRandom(e)}
+              className="mr-2 ml-2 select-none rounded-lg border-2 border-black bg-black text-center text-white hover:cursor-pointer hover:bg-white hover:text-black"
+            >
+              Random
+            </div>
+            <div className="mr-2 ml-2"></div>
+          </div>
         </div>
       </div>
     </>
@@ -157,15 +252,14 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const session = await getServerAuthSession(ctx);
 
-  if (!session) {
+  if (!session || !session?.user?.name) {
     return {
       redirect: { destination: "/login" },
       props: {},
     };
   }
-
   return {
-    props: {},
+    props: session.user,
   };
 };
 

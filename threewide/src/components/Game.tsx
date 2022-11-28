@@ -1,19 +1,33 @@
-import { StaticImageData } from "next/image";
 import React, { useState } from "react";
-import { Game, Goal } from "src/models/game_description.model";
+import { Game } from "src/models/game_description.model";
 import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
-import { boolean, number } from "zod";
-import Board from "./Board";
-import Piece from "./Piece";
 import Tetris from "./Tetris";
+import SettingsPage, { Settings } from "./Settings";
+import GoalDisplay from "./Goal";
 
 export type GameProperties = {
   game: Game | undefined;
   onGameWin: () => void;
   onGameLose: () => void;
+  onOverlayToggle: (over: boolean) => void;
+  settings: Settings;
+  onSettingsUpdate: (newSettings: Settings) => void;
+  onGameNext?: () => void;
+  onGamePrevious?: () => void;
+  children?: any;
 };
 
-const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
+const TetrisGame = ({
+  game,
+  onGameWin,
+  onGameLose,
+  onOverlayToggle,
+  settings,
+  onSettingsUpdate,
+  onGameNext,
+  onGamePrevious,
+  children,
+}: GameProperties) => {
   const emptyBoard = [
     [
       PieceType.None,
@@ -293,17 +307,24 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     ],
   ];
 
-  if (!game)
-    return (
-      <Tetris
-        width={200}
-        height={400}
-        startingBoardState={emptyBoard}
-        startingPieceQueue={[]}
-        generatePieceQueue={false}
-        playGame={false}
-      />
-    );
+  const [isWin, setIsWin] = useState(false);
+
+  const onSettingsSaveHandler = (newSettings: Settings) => {
+    onSettingsUpdate({ ...newSettings });
+    onOverlayToggle(false);
+    setShowSettings(false);
+  };
+
+  const onSettingCancelHandler = () => {
+    onOverlayToggle(false);
+    setShowSettings(false);
+  };
+
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const onShowSettings = () => {
+    onOverlayToggle(true);
+    setShowSettings(true);
+  };
 
   const [points, setPoints] = useState<Points>({
     backToBackLevel: 0,
@@ -316,6 +337,29 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     tspinMinis: 0,
   });
 
+  if (!game)
+    return (
+      <div>
+        <SettingsPage
+          showSettings={showSettings}
+          onSettingsSave={onSettingsSaveHandler}
+          onSettingCancel={onSettingCancelHandler}
+          currentSettings={settings}
+        />
+        <Tetris
+          width={200}
+          height={400}
+          startingBoardState={emptyBoard}
+          startingPieceQueue={[]}
+          generatePieceQueue={true}
+          onShowSettings={onShowSettings}
+          settings={settings}
+        >
+          {children}
+        </Tetris>
+      </div>
+    );
+
   const isTspinOrMini = (
     board: PieceType[][],
     piece: TetrisPiece,
@@ -323,7 +367,7 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   ): [boolean, boolean] => {
     if (piece.pieceType != PieceType.T) return [false, false];
 
-    let corners: [
+    const corners: [
       [number, number],
       [number, number],
       [number, number],
@@ -336,13 +380,11 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     ];
 
     let cornerCount = 0;
-    for (let cornerLocation of corners) {
-      if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]!]![
-          cornerLocation[0] + piece?.pieceLocation[0]!
-        ] != PieceType.None
-      ) {
-        cornerCount += 1;
+    for (const cornerLocation of corners) {
+      const boardRow = board[cornerLocation[1] + piece?.pieceLocation[1] + 3];
+      if (boardRow) {
+        if (boardRow[cornerLocation[0] + piece?.pieceLocation[0]])
+          cornerCount += 1;
       }
     }
 
@@ -381,14 +423,14 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
 
     cornerCount = 0;
 
-    for (let cornerLocation of cornerLocations) {
-      if (
-        board[cornerLocation[1]! + piece?.pieceLocation[1]!]![
-          cornerLocation[0] + piece?.pieceLocation[0]!
-        ] != PieceType.None
-      ) {
-        cornerCount += 1;
-      }
+    for (const cornerLocation of cornerLocations) {
+      const boardRow = board[cornerLocation[1] + piece.pieceLocation[1] + 3];
+      if (boardRow)
+        if (
+          boardRow[cornerLocation[0] + piece.pieceLocation[0]] != PieceType.None
+        ) {
+          cornerCount += 1;
+        }
     }
 
     switch (cornerCount) {
@@ -402,8 +444,8 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   };
 
   const isAllClear = (board: PieceType[][]): boolean => {
-    for (let row of board) {
-      for (let item of row) {
+    for (const row of board) {
+      for (const item of row) {
         if (item != PieceType.None) {
           return false;
         }
@@ -445,7 +487,7 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
   ): Points => {
     let linesSent = 0;
 
-    let newPoints = { ...points };
+    const newPoints = { ...points };
 
     const [isTspinMini, isTspin] = isTspinOrMini(
       currentBoardState,
@@ -527,7 +569,7 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
     finalBoardState: PieceType[][],
     lastPoints: Points | undefined
   ): void => {
-    let finalPoints = lastPoints ?? points;
+    const finalPoints = lastPoints ?? points;
 
     if (
       (game.goal.linesCleared &&
@@ -548,20 +590,51 @@ const TetrisGame = ({ game, onGameWin, onGameLose }: GameProperties) => {
         !isBoardEqual(game.goal.finalState!, finalBoardState))
     )
       onGameLose();
-    else onGameWin();
+    else {
+      onGameWin();
+      setIsWin(true);
+    }
+  };
+
+  const onGameResetHandler = () => {
+    setPoints({
+      backToBackLevel: 0,
+      linesCleared: 0,
+      pointsGained: 0,
+      tspinDoubles: 0,
+      tspinSingles: 0,
+      tspinTriples: 0,
+      tspinMiniDoubles: 0,
+      tspinMinis: 0,
+    });
+    setIsWin(false);
   };
 
   return (
-    <Tetris
-      width={200}
-      height={400}
-      startingBoardState={game.startingBoardState}
-      startingPieceQueue={game.startingPieceQueue}
-      generatePieceQueue={false}
-      playGame={true}
-      onPointGained={onPointsGained}
-      onGameEnd={onGameEnd}
-    ></Tetris>
+    <div>
+      <SettingsPage
+        showSettings={showSettings}
+        onSettingsSave={onSettingsSaveHandler}
+        onSettingCancel={onSettingCancelHandler}
+        currentSettings={settings}
+      />
+      <Tetris
+        width={200}
+        height={400}
+        startingBoardState={game.startingBoardState}
+        startingPieceQueue={game.startingPieceQueue}
+        generatePieceQueue={false}
+        onShowSettings={onShowSettings}
+        onPointGained={onPointsGained}
+        onGameEnd={onGameEnd}
+        onGameNext={onGameNext}
+        onGamePrevious={onGamePrevious}
+        onGameReset={onGameResetHandler}
+        isWin={isWin}
+        settings={settings}
+      />
+      <GoalDisplay goal={game.goal} />
+    </div>
   );
 };
 

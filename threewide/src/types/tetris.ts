@@ -18,6 +18,19 @@ export enum PieceType {
   None = "",
 }
 
+export type Moves =
+  | "moveLeft"
+  | "moveRight"
+  | "rotate90"
+  | "rotate180"
+  | "rotate270"
+  | "holdPiece"
+  | "softDrop"
+  | "hardDrop"
+  | "reset"
+  | "previous"
+  | "next";
+
 export type TetrisPiece = {
   pieceType: PieceType;
   pieceRotation: Rotation;
