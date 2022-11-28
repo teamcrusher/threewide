@@ -6,7 +6,7 @@ import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotati
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
 import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { Settings } from "./Settings";
@@ -128,6 +128,9 @@ const Tetris = ({
     ),
     isSlamKicked: false,
   });
+
+  const currentPieceRef = useRef<TetrisPiece>(currentPiece);
+
   const [combo, setCombo] = useState<number>(0);
 
   const [currentHeldPiece, setCurrentHeldPiece] = useState<HeldPiece>({
@@ -206,17 +209,19 @@ const Tetris = ({
       newQueue = newQueue.concat(generateBag());
       if (queue.length === 0) {
         const firstPiece = newQueue[0]!;
-
-        setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
-          piece.pieceType = firstPiece;
-          piece.pieceLocation = getPieceStartingLocationFromPieceType(
+        const newPiece = {
+          pieceType: firstPiece,
+          pieceLocation: getPieceStartingLocationFromPieceType(
             firstPiece,
             board
-          );
-          piece.pieceRotation = 0;
-          piece.isSlamKicked = false;
-          return { ...piece };
-        });
+          ),
+          pieceRotation: 0,
+          isSlamKicked: false,
+        };
+
+        setCurrentPiece(newPiece);
+        currentPieceRef.current = newPiece;
+
         newQueue = newQueue.slice(1);
       }
 
@@ -274,7 +279,7 @@ const Tetris = ({
       hasHeldPiece: false,
     });
 
-    setCurrentPiece({
+    const newPiece = {
       pieceType: filledQueue[0]!,
       pieceLocation: getPieceStartingLocationFromPieceType(
         filledQueue[0]!,
@@ -282,14 +287,17 @@ const Tetris = ({
       ),
       pieceRotation: Rotation.Zero,
       isSlamKicked: false,
-    });
+    };
+    setCurrentPiece(newPiece);
+    currentPieceRef.current = newPiece;
+
     setQueue(filledQueue.slice(1));
     setGameOver(false);
   }
 
   function onHandleRotatePiece(rotation: Rotation): void {
-    let newLocation = currentPiece.pieceLocation;
-    const newRotation = (currentPiece.pieceRotation + rotation) % 4;
+    let newLocation = currentPieceRef.current.pieceLocation;
+    const newRotation = (currentPieceRef.current.pieceRotation + rotation) % 4;
 
     if (isLeftDas) {
       newLocation = getPathFindPieceWithRotation(
@@ -308,8 +316,8 @@ const Tetris = ({
     }
 
     const kickTables = getTableFromPieceAndRotation(
-      currentPiece.pieceType,
-      currentPiece.pieceRotation,
+      currentPieceRef.current.pieceType,
+      currentPieceRef.current.pieceRotation,
       rotation
     );
 
@@ -338,12 +346,15 @@ const Tetris = ({
       );
     }
 
-    setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
-      piece.pieceLocation = newLocation;
-      piece.pieceRotation = newRotation;
-      piece.isSlamKicked = isSlamKicked;
-      return { ...piece };
-    });
+    const newPiece: TetrisPiece = {
+      ...currentPieceRef.current,
+      pieceLocation: newLocation,
+      pieceRotation: newRotation,
+      isSlamKicked: isSlamKicked,
+    };
+
+    currentPieceRef.current = newPiece;
+    setCurrentPiece(newPiece);
   }
 
   function onMovePieceRightHandler(): void {
@@ -375,40 +386,52 @@ const Tetris = ({
   function movePieceLeft(amount: number) {
     let newLocation = getPathFindPiece(
       [-1, 0],
-      [currentPiece.pieceLocation[0] - amount, currentPiece.pieceLocation[1]],
-      currentPiece.pieceLocation
+      [
+        currentPieceRef.current.pieceLocation[0] - amount,
+        currentPieceRef.current.pieceLocation[1],
+      ],
+      currentPieceRef.current.pieceLocation
     );
 
     if (isSoftDroping) {
       newLocation = getPathFindPiece([0, 1], [newLocation[0], 20], newLocation);
     }
 
-    if (newLocation != currentPiece.pieceLocation) {
-      setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
-        piece.pieceLocation = newLocation;
-        piece.isSlamKicked = false;
-        return { ...piece };
-      });
+    if (newLocation != currentPieceRef.current.pieceLocation) {
+      const newPiece: TetrisPiece = {
+        ...currentPieceRef.current,
+        pieceLocation: newLocation,
+        isSlamKicked: false,
+      };
+
+      currentPieceRef.current = newPiece;
+      setCurrentPiece(newPiece);
     }
   }
 
   function movePieceRight(amount: number) {
     let newLocation = getPathFindPiece(
       [1, 0],
-      [currentPiece.pieceLocation[0] + amount, currentPiece.pieceLocation[1]],
-      currentPiece.pieceLocation
+      [
+        currentPieceRef.current.pieceLocation[0] + amount,
+        currentPieceRef.current.pieceLocation[1],
+      ],
+      currentPieceRef.current.pieceLocation
     );
 
     if (isSoftDroping) {
       newLocation = getPathFindPiece([0, 1], [newLocation[0], 23], newLocation);
     }
 
-    if (newLocation != currentPiece.pieceLocation) {
-      setCurrentPiece((piece: TetrisPiece): TetrisPiece => {
-        piece.pieceLocation = newLocation;
-        piece.isSlamKicked = false;
-        return { ...piece };
-      });
+    if (newLocation != currentPieceRef.current.pieceLocation) {
+      const newPiece: TetrisPiece = {
+        ...currentPieceRef.current,
+        pieceLocation: newLocation,
+        isSlamKicked: false,
+      };
+
+      currentPieceRef.current = newPiece;
+      setCurrentPiece(newPiece);
     }
   }
 
@@ -491,8 +514,8 @@ const Tetris = ({
   function isPieceMoveValid(location: [number, number]): boolean {
     const tileLocations: [number, number][] =
       getTileLocationsFromPieceAndRotations(
-        currentPiece.pieceType,
-        currentPiece.pieceRotation
+        currentPieceRef.current.pieceType,
+        currentPieceRef.current.pieceRotation
       );
 
     for (const tileLocation of tileLocations) {
@@ -516,7 +539,10 @@ const Tetris = ({
     rotation: Rotation
   ): boolean {
     const tileLocations: [number, number][] =
-      getTileLocationsFromPieceAndRotations(currentPiece.pieceType, rotation);
+      getTileLocationsFromPieceAndRotations(
+        currentPieceRef.current.pieceType,
+        rotation
+      );
     for (const tileLocation of tileLocations) {
       if (
         locationOutOfBound([
@@ -595,29 +621,33 @@ const Tetris = ({
     if (currentHeldPiece.pieceType == "") {
       if (queue.length == 0 || queue[0] == PieceType.None) return;
       setCurrentHeldPiece({
-        pieceType: currentPiece.pieceType,
+        pieceType: currentPieceRef.current.pieceType,
         hasHeldPiece: true,
       });
 
-      setCurrentPiece({
+      const newPiece: TetrisPiece = {
         pieceType: queue[0]!,
         pieceLocation: getPieceStartingLocationFromPieceType(queue[0]!, board),
         pieceRotation: 0,
         isSlamKicked: false,
-      });
+      };
+      currentPieceRef.current = newPiece;
+      setCurrentPiece(newPiece);
       popPiece();
     } else {
       const heldPiece = currentHeldPiece.pieceType;
       setCurrentHeldPiece({
-        pieceType: currentPiece.pieceType,
+        pieceType: currentPieceRef.current.pieceType,
         hasHeldPiece: true,
       });
-      setCurrentPiece({
+      const newPiece = {
         pieceType: heldPiece,
         pieceLocation: getPieceStartingLocationFromPieceType(heldPiece, board),
         pieceRotation: 0,
         isSlamKicked: false,
-      });
+      };
+      currentPieceRef.current = newPiece;
+      setCurrentPiece(newPiece);
     }
   }
 
@@ -637,19 +667,19 @@ const Tetris = ({
   function onHandlePlacePiece(): void {
     const placePieceLocation: [number, number] = getPathFindPiece(
       [0, 1],
-      [currentPiece.pieceLocation[0], 23],
-      currentPiece.pieceLocation
+      [currentPieceRef.current.pieceLocation[0], 23],
+      currentPieceRef.current.pieceLocation
     );
 
     const tileLocations = getTileLocationsFromPieceAndRotations(
-      currentPiece.pieceType,
-      currentPiece.pieceRotation
+      currentPieceRef.current.pieceType,
+      currentPieceRef.current.pieceRotation
     );
 
     for (const tileLocation of tileLocations) {
       board[tileLocation[1] + placePieceLocation[1] + 3]![
         tileLocation[0] + placePieceLocation[0]
-      ] = currentPiece.pieceType;
+      ] = currentPieceRef.current.pieceType;
     }
 
     const removedYLocations = new Set<number>();
@@ -678,7 +708,7 @@ const Tetris = ({
       points = onPointGained(
         board,
         newBoard,
-        { ...currentPiece, pieceLocation: placePieceLocation },
+        { ...currentPieceRef.current, pieceLocation: placePieceLocation },
         clearedLines,
         combo
       );
@@ -699,12 +729,14 @@ const Tetris = ({
     ) {
       if (onGameEnd) onGameEnd(newBoard, points);
       setGameOver(true);
-      setCurrentPiece({
+      const newPiece: TetrisPiece = {
         pieceType: queue[0] ?? PieceType.None,
         pieceLocation: [0, 0],
         pieceRotation: 0,
         isSlamKicked: false,
-      });
+      };
+      currentPieceRef.current = newPiece;
+      setCurrentPiece(newPiece);
       return;
     }
 
@@ -727,20 +759,22 @@ const Tetris = ({
       return;
     }
 
-    setCurrentPiece({
+    const newPiece = {
       pieceType: queue[0] ?? PieceType.None,
       pieceLocation: nextStartingLocation,
       pieceRotation: 0,
       isSlamKicked: false,
-    });
+    };
+    currentPieceRef.current = newPiece;
+    setCurrentPiece(newPiece);
   }
 
   function isInBoard(placePieceLocation: [number, number]): boolean {
     let isInBoard = false;
 
     const tileLocations = getTileLocationsFromPieceAndRotations(
-      currentPiece.pieceType,
-      currentPiece.pieceRotation
+      currentPieceRef.current.pieceType,
+      currentPieceRef.current.pieceRotation
     );
 
     for (const tileLocation of tileLocations) {
@@ -757,21 +791,22 @@ const Tetris = ({
 
     const softDropLocation = getPathFindPiece(
       [0, 1],
-      [currentPiece.pieceLocation[0], 20],
-      currentPiece.pieceLocation
+      [currentPieceRef.current.pieceLocation[0], 20],
+      currentPieceRef.current.pieceLocation
     );
 
     if (
-      softDropLocation[0] == currentPiece.pieceLocation[0] &&
-      softDropLocation[1] == currentPiece.pieceLocation[1]
+      softDropLocation[0] == currentPieceRef.current.pieceLocation[0] &&
+      softDropLocation[1] == currentPieceRef.current.pieceLocation[1]
     )
       return;
-
-    setCurrentPiece({
-      ...currentPiece,
+    const newPiece: TetrisPiece = {
+      ...currentPieceRef.current,
       pieceLocation: softDropLocation,
       isSlamKicked: false,
-    });
+    };
+    currentPieceRef.current = newPiece;
+    setCurrentPiece(newPiece);
   }
 
   function onSoftDropDisable(): void {
@@ -787,8 +822,8 @@ const Tetris = ({
 
   const shadowPieceLocation = getPathFindPiece(
     [0, 1],
-    [currentPiece.pieceLocation[0], 20],
-    currentPiece.pieceLocation
+    [currentPieceRef.current.pieceLocation[0], 20],
+    currentPieceRef.current.pieceLocation
   );
 
   const tileDimensions = { height: 20, width: 20 };
