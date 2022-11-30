@@ -16,12 +16,12 @@ const HoldPiece = ({
   rotation,
   pieceType,
 }: PieceProperties) => {
-  if (pieceType == PieceType.None) return <></>;
-
   const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, tileDimensions.width * 4, tileDimensions.height * 4);
-    let tiles = getTileLocationsFromPieceAndRotations(pieceType, rotation);
-    for (let tile of tiles) {
+    if (pieceType == PieceType.None) return;
+
+    const tiles = getTileLocationsFromPieceAndRotations(pieceType, rotation);
+    for (const tile of tiles) {
       ctx.fillStyle = getColorFromBoardStateTile(pieceType);
       ctx.fillRect(
         tile[0] * tileDimensions.width,

@@ -10,7 +10,7 @@ type BoardPieceProperties = {
   rotation: Rotation;
   pieceType: PieceType;
   location: [number, number];
-  isShadowPiece?: boolean; 
+  isShadowPiece?: boolean;
 };
 
 const BoardPiece = ({
@@ -20,19 +20,26 @@ const BoardPiece = ({
   location,
   isShadowPiece,
 }: BoardPieceProperties) => {
-0
+  0;
   const draw = (ctx: CanvasRenderingContext2D) => {
     if (pieceType == PieceType.None) return;
 
-    let tiles = getTileLocationsFromPieceAndRotations(pieceType, rotation);
-      for (let tile of tiles) {
-        ctx.fillStyle = (isShadowPiece ?? false) ? "#c1c1c1" :  getColorFromBoardStateTile(pieceType);
-        ctx.fillRect(location[0] * tileDimensions.width + tile[0]*20,(location[1]+3) * tileDimensions.height+ tile[1]*20, 20, 20)
-      }
-  }
+    const tiles = getTileLocationsFromPieceAndRotations(pieceType, rotation);
+    for (const tile of tiles) {
+      ctx.fillStyle =
+        isShadowPiece ?? false
+          ? "#c1c1c1"
+          : getColorFromBoardStateTile(pieceType);
+      ctx.fillRect(
+        location[0] * tileDimensions.width + tile[0] * 20,
+        (location[1] + 3) * tileDimensions.height + tile[1] * 20,
+        20,
+        20
+      );
+    }
+  };
 
-  return (draw
-  );
+  return draw;
 };
 
 export default BoardPiece;
