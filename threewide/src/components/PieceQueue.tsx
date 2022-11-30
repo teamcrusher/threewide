@@ -7,7 +7,7 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
   const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, 84, 400);
-    for (const pieceNum = 0; pieceNum < 6; pieceNum++) {
+    for (let pieceNum = 0; pieceNum < 6; pieceNum++) {
       const pieceTile = queue[pieceNum];
       if (!pieceTile) break;
 
