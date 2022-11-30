@@ -1,7 +1,6 @@
 import Board from "./Board";
 import PieceQueue from "./PieceQueue";
-import { getTextureFromBoardStateTile, ShadowPiece } from "@public/BoardTiles";
-import Piece from "./Piece";
+import HoldPiece from "./HoldPiece";
 import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
@@ -11,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { Settings } from "./Settings";
 import EndGame from "./EndGame";
+import BoardPiece from "./BoardPiece";
 
 const useDebounce = (
   val: DAS,
@@ -827,6 +827,41 @@ const Tetris = ({
 
   const tileDimensions = { height: 20, width: 20 };
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const clearBoard = (ctx: CanvasRenderingContext2D) => {
+    ctx.clearRect(0, 0, 200, 460);
+  };
+
+  const drawCurrentPiece = BoardPiece({
+    location: currentPiece.pieceLocation,
+    tileDimensions: tileDimensions,
+    pieceType: currentPiece.pieceType,
+    rotation: currentPiece.pieceRotation,
+  });
+
+  const drawShadowPiece = BoardPiece({
+    location: shadowPieceLocation,
+    tileDimensions: tileDimensions,
+    isShadowPiece: true,
+    pieceType: currentPiece.pieceType,
+    rotation: currentPiece.pieceRotation,
+  });
+
+  const drawBoard = Board({ width, height, boardState: board });
+
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const context = canvas.getContext("2d");
+
+    if (context) {
+      clearBoard(context);
+      drawBoard(context);
+      drawShadowPiece(context);
+      drawCurrentPiece(context);
+    }
+  }, [drawCurrentPiece]);
+
   return (
     <KeyListener
       gameOver={gameOver}
@@ -844,32 +879,16 @@ const Tetris = ({
       settings={settings}
     >
       <div className="mt-20 flex">
-        <div className=" flex w-20 justify-center">
-          <Piece
-            location={[0, 1]}
+        <div className="mt-20 w-20">
+          <HoldPiece
             tileDimensions={{ width: 15, height: 15 }}
-            texture={getTextureFromBoardStateTile(currentHeldPiece.pieceType)}
             pieceType={currentHeldPiece.pieceType}
             rotation={0}
           />
         </div>
 
-        <div>
-          <Piece
-            location={shadowPieceLocation}
-            tileDimensions={tileDimensions}
-            texture={ShadowPiece}
-            pieceType={currentPiece.pieceType}
-            rotation={currentPiece.pieceRotation}
-          />
-          <Piece
-            location={currentPiece.pieceLocation}
-            tileDimensions={tileDimensions}
-            texture={getTextureFromBoardStateTile(currentPiece.pieceType)}
-            pieceType={currentPiece.pieceType}
-            rotation={currentPiece.pieceRotation}
-          />
-          <Board width={width} height={height} boardState={board}>
+        <div className="relative">
+          <div className="absolute top-[35%] left-0 w-full bg-gray-400/95">
             {children}
             <EndGame
               onGameReset={onResetHandler}
@@ -878,9 +897,10 @@ const Tetris = ({
               isWin={isWin}
               gameOver={gameOver}
             />
-          </Board>
+          </div>
+          <canvas width={200} height={460} ref={canvasRef}></canvas>
         </div>
-        <div className="flex flex-col">
+        <div className="mt-10">
           <PieceQueue queue={queue} />
           <FontAwesomeIcon
             className="border-1 mb-0 mt-auto border-red-500 hover:cursor-pointer"
