@@ -1,11 +1,10 @@
-import { PieceType } from "src/types/tetris";
+import type { PieceType } from "src/types/tetris";
 import { getColorFromBoardStateTile } from "@utils/tetris/PieceColors";
 
 type BoardProperties = {
   width: number;
   height: number;
   boardState: PieceType[][];
-  children?: any;
 };
 
 function Board({ width, height, boardState }: BoardProperties) {

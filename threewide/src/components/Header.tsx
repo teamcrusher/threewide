@@ -2,6 +2,7 @@ import React from "react";
 import Logo from "../../public/logo.svg";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 export type HeaderProps = {
   addHomeIcon: boolean;
@@ -41,7 +42,7 @@ const Header = ({ addHomeIcon, addLogOutIcon }: HeaderProps) => {
 
   return (
     <div className="flex items-center border-b-4 border-black">
-      <img className="m-5" src={Logo.src} height={125} width={125} alt="" />
+      <Image className="m-5" src={Logo.src} height={125} width={125} alt="" />
 
       <div>
         <h1 className="text-5xl">

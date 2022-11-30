@@ -1,8 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { PieceType, Rotation } from "src/types/tetris";
+import type { PieceType, Rotation } from "src/types/tetris";
 import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
-import { getPieceSizesFromPieceType } from "@utils/tetris/PieceSizes";
-
 import { getColorFromBoardStateTile } from "@utils/tetris/PieceColors";
 
 type BoardPieceProperties = {
@@ -22,7 +19,7 @@ const BoardPiece = ({
 }: BoardPieceProperties) => {
   0;
   const draw = (ctx: CanvasRenderingContext2D) => {
-    if (pieceType == PieceType.None) return;
+    if (pieceType == "") return;
 
     const tiles = getTileLocationsFromPieceAndRotations(pieceType, rotation);
     for (const tile of tiles) {

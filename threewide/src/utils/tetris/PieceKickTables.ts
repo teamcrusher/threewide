@@ -175,9 +175,9 @@ function getTableFromPieceAndRotation(
   currentRotation: Rotation,
   rotation: Rotation
 ): [number, number][] {
-  if (rotation == Rotation.OneEighty) {
+  if (rotation == 2) {
     return default180KickTable[currentRotation]!;
-  } else if (pieceType == PieceType.I) {
+  } else if (pieceType == "I") {
     return iKickTable[currentRotation]![rotation]!;
   } else {
     return defaultKicktable[currentRotation]![rotation]!;

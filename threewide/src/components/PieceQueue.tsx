@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { PieceType, Rotation } from "src/types/tetris";
+import type { PieceType } from "src/types/tetris";
 import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
 import { getColorFromBoardStateTile } from "@utils/tetris/PieceColors";
 
@@ -11,10 +11,8 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
       const pieceTile = queue[pieceNum];
       if (!pieceTile) break;
 
-      const tiles = getTileLocationsFromPieceAndRotations(
-        pieceTile,
-        Rotation.Zero
-      );
+      const tiles = getTileLocationsFromPieceAndRotations(pieceTile, 0);
+
       for (const tile of tiles) {
         ctx.fillStyle = getColorFromBoardStateTile(pieceTile);
         ctx.fillRect(

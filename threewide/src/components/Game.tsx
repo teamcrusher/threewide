@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Game } from "src/models/game_description.model";
-import { PieceType, Points, Rotation, TetrisPiece } from "src/types/tetris";
+import type { ReactNode } from "react";
+import type { Game } from "src/models/game_description.model";
+import type { PieceType, Points, TetrisPiece } from "src/types/tetris";
+import type { Settings } from "./Settings";
 import Tetris from "./Tetris";
-import SettingsPage, { Settings } from "./Settings";
+import SettingsPage from "./Settings";
 import GoalDisplay from "./Goal";
 
 export type GameProperties = {
@@ -14,7 +16,7 @@ export type GameProperties = {
   onSettingsUpdate: (newSettings: Settings) => void;
   onGameNext?: () => void;
   onGamePrevious?: () => void;
-  children?: any;
+  children?: ReactNode;
 };
 
 const TetrisGame = ({
@@ -29,283 +31,30 @@ const TetrisGame = ({
   children,
 }: GameProperties) => {
   const emptyBoard = [
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-    [
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-      PieceType.None,
-    ],
-  ];
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", "", ""],
+  ] as PieceType[][];
 
   const [isWin, setIsWin] = useState(false);
 
@@ -365,7 +114,7 @@ const TetrisGame = ({
     piece: TetrisPiece,
     isSlamKicked: boolean
   ): [boolean, boolean] => {
-    if (piece.pieceType != PieceType.T) return [false, false];
+    if (piece.pieceType != "T") return [false, false];
 
     const corners: [
       [number, number],
@@ -395,25 +144,25 @@ const TetrisGame = ({
     let cornerLocations: [[number, number], [number, number]];
 
     switch (piece.pieceRotation) {
-      case Rotation.Zero:
+      case 0:
         cornerLocations = [
           [0, 0],
           [2, 0],
         ];
         break;
-      case Rotation.Clock:
+      case 1:
         cornerLocations = [
           [2, 0],
           [2, 2],
         ];
         break;
-      case Rotation.OneEighty:
+      case 2:
         cornerLocations = [
           [0, 2],
           [2, 2],
         ];
         break;
-      case Rotation.Counter:
+      case 3:
         cornerLocations = [
           [0, 0],
           [0, 2],
@@ -426,9 +175,7 @@ const TetrisGame = ({
     for (const cornerLocation of cornerLocations) {
       const boardRow = board[cornerLocation[1] + piece.pieceLocation[1] + 3];
       if (boardRow)
-        if (
-          boardRow[cornerLocation[0] + piece.pieceLocation[0]] != PieceType.None
-        ) {
+        if (boardRow[cornerLocation[0] + piece.pieceLocation[0]] != "") {
           cornerCount += 1;
         }
     }
@@ -446,7 +193,7 @@ const TetrisGame = ({
   const isAllClear = (board: PieceType[][]): boolean => {
     for (const row of board) {
       for (const item of row) {
-        if (item != PieceType.None) {
+        if (item != "") {
           return false;
         }
       }
@@ -473,9 +220,10 @@ const TetrisGame = ({
 
   const getSingleComboAmount = (combo: number): number => {
     //TODO: Figure out how the hell the single combo system works
-    if (combo > 20) return 3;
+    let comboAmount = singleComboTable[combo];
 
-    return singleComboTable[combo]!;
+    if (!comboAmount) return 3;
+    else return comboAmount;
   };
 
   const onPointsGained = (
@@ -558,6 +306,7 @@ const TetrisGame = ({
     if (!board1 || !board2 || board1.length == 0 || board2.length == 0)
       return true;
 
+    //Todo refactor to use no non-null assertions?
     for (let rowIndex = 0; rowIndex < 20; rowIndex++)
       for (let columnIndex = 0; columnIndex < 10; columnIndex++)
         if (board1[rowIndex]![columnIndex] !== board2[rowIndex]![columnIndex])
