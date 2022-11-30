@@ -15,7 +15,7 @@ const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
         pieceTile,
         Rotation.Zero
       );
-      for (let tile of tiles) {
+      for (const tile of tiles) {
         ctx.fillStyle = getColorFromBoardStateTile(pieceTile);
         ctx.fillRect(
           12 + tile[0] * 15,
