@@ -220,7 +220,7 @@ const TetrisGame = ({
 
   const getSingleComboAmount = (combo: number): number => {
     //TODO: Figure out how the hell the single combo system works
-    let comboAmount = singleComboTable[combo];
+    const comboAmount = singleComboTable[combo];
 
     if (!comboAmount) return 3;
     else return comboAmount;
