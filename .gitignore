@@ -1,1 +1,8 @@
 .DS_Store
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+.auctex-auto
+*.png
