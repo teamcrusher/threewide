@@ -1,73 +1,44 @@
-import React from "react";
-import {
-  ITile,
-  JTile,
-  LTile,
-  STile,
-  ZTile,
-  OTile,
-  TTile,
-  DefaultTile,
-} from "@public/BoardTiles";
-import { PieceType } from "src/types/tetris";
-import { StaticImageData } from "next/image";
-import Piece from "./Piece";
+import React, { useEffect, useRef } from "react";
+import type { PieceType } from "src/types/tetris";
+import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
+import { getColorFromBoardStateTile } from "@utils/tetris/PieceColors";
 
 const PieceQueue = ({ queue }: { queue: PieceType[] }) => {
-  function getTextureFromBoardStateTile(boardTile: PieceType): StaticImageData {
-    let tile;
+  const draw = (ctx: CanvasRenderingContext2D) => {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, 84, 400);
+    for (let pieceNum = 0; pieceNum < 6; pieceNum++) {
+      const pieceTile = queue[pieceNum];
+      if (!pieceTile) break;
 
-    switch (boardTile) {
-      case "T":
-        tile = TTile;
-        break;
-      case "I":
-        tile = ITile;
-        break;
-      case "J":
-        tile = JTile;
-        break;
-      case "L":
-        tile = LTile;
-        break;
-      case "S":
-        tile = STile;
-        break;
-      case "Z":
-        tile = ZTile;
-        break;
-      case "O":
-        tile = OTile;
-        break;
-      default:
-        tile = DefaultTile;
-        break;
+      const tiles = getTileLocationsFromPieceAndRotations(pieceTile, 0);
+
+      for (const tile of tiles) {
+        ctx.fillStyle = getColorFromBoardStateTile(pieceTile);
+        ctx.fillRect(
+          12 + tile[0] * 15,
+          12 + pieceNum * 45 + tile[1] * 15,
+          15,
+          15
+        );
+      }
     }
-    return tile;
-  }
+  };
 
-  function getPieceQueue(q: PieceType[]) {
-    const pieces = [];
-    let index = 0;
-    for (const queueElement of q) {
-      pieces.push(
-        <Piece
-          key={`piece queue - ${index}`}
-          pieceType={queueElement}
-          location={[0, index * 3]}
-          rotation={0}
-          texture={getTextureFromBoardStateTile(queueElement)}
-          tileDimensions={{ width: 15, height: 15 }}
-        />
-      );
-      index += 1;
-      if (pieces.length == 7) break;
-    }
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    return pieces;
-  }
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const context = canvas.getContext("2d");
 
-  return <div className="w-20 p-2">{getPieceQueue(queue)}</div>;
+    if (context) draw(context);
+  }, [draw]);
+
+  return (
+    <div className="w-20 p-2">
+      <canvas ref={canvasRef} width={84} height={400}></canvas>
+    </div>
+  );
 };
 
 export default PieceQueue;

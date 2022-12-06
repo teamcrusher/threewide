@@ -1,22 +1,8 @@
 import { Goal } from "src/models/game_description.model";
 
-export enum Rotation {
-  Zero = 0,
-  Clock = 1,
-  OneEighty = 2,
-  Counter = 3,
-}
+export type Rotation = 0 | 1 | 2 | 3;
 
-export enum PieceType {
-  T = "T",
-  S = "S",
-  Z = "Z",
-  L = "L",
-  O = "O",
-  J = "J",
-  I = "I",
-  None = "",
-}
+export type PieceType = "T" | "S" | "Z" | "L" | "O" | "J" | "I" | "";
 
 export type Moves =
   | "moveLeft"

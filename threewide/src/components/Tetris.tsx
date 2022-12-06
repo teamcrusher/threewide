@@ -1,16 +1,16 @@
 import Board from "./Board";
 import PieceQueue from "./PieceQueue";
-import { getTextureFromBoardStateTile, ShadowPiece } from "@public/BoardTiles";
-import Piece from "./Piece";
+import HoldPiece from "./HoldPiece";
 import { getTileLocationsFromPieceAndRotations } from "@utils/tetris/PieceRotations";
 import KeyListener from "./KeyListener";
 import { getTableFromPieceAndRotation } from "@utils/tetris/PieceKickTables";
 import { PieceType, Points, Rotation, TetrisPiece } from "../types/tetris";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { Settings } from "./Settings";
 import EndGame from "./EndGame";
+import BoardPiece from "./BoardPiece";
 
 const useDebounce = (
   val: DAS,
@@ -60,7 +60,7 @@ type TetrisProps = {
   onGamePrevious?: () => void;
   onGameReset?: () => void;
   isWin?: boolean;
-  children?: any;
+  children?: ReactNode;
 };
 
 type HeldPiece = {
@@ -119,8 +119,7 @@ const Tetris = ({
   const isRightDas = currentDAS.direction == "right" && currentDAS.enabled;
 
   const [currentPiece, setCurrentPiece] = useState<TetrisPiece>({
-    pieceType:
-      startingPieceQueue.length == 0 ? PieceType.None : startingPieceQueue[0]!,
+    pieceType: startingPieceQueue.length == 0 ? "" : startingPieceQueue[0]!,
     pieceRotation: 0,
     pieceLocation: getPieceStartingLocationFromPieceType(
       startingPieceQueue[0]!,
@@ -134,7 +133,7 @@ const Tetris = ({
   const [combo, setCombo] = useState<number>(0);
 
   const [currentHeldPiece, setCurrentHeldPiece] = useState<HeldPiece>({
-    pieceType: PieceType.None,
+    pieceType: "",
     hasHeldPiece: false,
   });
 
@@ -164,7 +163,7 @@ const Tetris = ({
 
     let startingXLocation = 3;
 
-    if (pieceType == PieceType.O) startingXLocation = 4;
+    if (pieceType == "O") startingXLocation = 4;
 
     if (isLeftDas ?? false) {
       startingXLocation = getPathFindPieceWithPieceType(
@@ -209,7 +208,7 @@ const Tetris = ({
       newQueue = newQueue.concat(generateBag());
       if (queue.length === 0) {
         const firstPiece = newQueue[0]!;
-        const newPiece = {
+        const newPiece: TetrisPiece = {
           pieceType: firstPiece,
           pieceLocation: getPieceStartingLocationFromPieceType(
             firstPiece,
@@ -234,15 +233,7 @@ const Tetris = ({
   }
 
   function generateBag(): PieceType[] {
-    const pieces: PieceType[] = [
-      PieceType.T,
-      PieceType.S,
-      PieceType.J,
-      PieceType.L,
-      PieceType.O,
-      PieceType.Z,
-      PieceType.I,
-    ];
+    const pieces: PieceType[] = ["T", "S", "J", "L", "O", "Z", "I"];
 
     for (let i = 0; i < 7; i++) {
       const randIndex = Math.floor(Math.random() * 7);
@@ -261,7 +252,7 @@ const Tetris = ({
     if (generatePieceQueue && queue.length <= 14) {
       newQueue.concat(generateBag());
     } else if (newQueue.length == 0) {
-      newQueue = [PieceType.None];
+      newQueue = [""];
     }
 
     newQueue = fillQueue(newQueue);
@@ -275,17 +266,17 @@ const Tetris = ({
 
     const filledQueue = fillQueue(startingPieceQueue);
     setCurrentHeldPiece({
-      pieceType: PieceType.None,
+      pieceType: "",
       hasHeldPiece: false,
     });
 
-    const newPiece = {
+    const newPiece: TetrisPiece = {
       pieceType: filledQueue[0]!,
       pieceLocation: getPieceStartingLocationFromPieceType(
         filledQueue[0]!,
         startingBoardState
       ),
-      pieceRotation: Rotation.Zero,
+      pieceRotation: 0,
       isSlamKicked: false,
     };
     setCurrentPiece(newPiece);
@@ -297,7 +288,8 @@ const Tetris = ({
 
   function onHandleRotatePiece(rotation: Rotation): void {
     let newLocation = currentPieceRef.current.pieceLocation;
-    const newRotation = (currentPieceRef.current.pieceRotation + rotation) % 4;
+    const newRotation = ((currentPieceRef.current.pieceRotation + rotation) %
+      4) as Rotation;
 
     if (isLeftDas) {
       newLocation = getPathFindPieceWithRotation(
@@ -619,7 +611,7 @@ const Tetris = ({
     if (currentHeldPiece.hasHeldPiece) return;
 
     if (currentHeldPiece.pieceType == "") {
-      if (queue.length == 0 || queue[0] == PieceType.None) return;
+      if (queue.length == 0 || queue[0] == "") return;
       setCurrentHeldPiece({
         pieceType: currentPieceRef.current.pieceType,
         hasHeldPiece: true,
@@ -640,29 +632,19 @@ const Tetris = ({
         pieceType: currentPieceRef.current.pieceType,
         hasHeldPiece: true,
       });
-      const newPiece = {
+      const newPiece: TetrisPiece = {
         pieceType: heldPiece,
         pieceLocation: getPieceStartingLocationFromPieceType(heldPiece, board),
         pieceRotation: 0,
         isSlamKicked: false,
       };
+
       currentPieceRef.current = newPiece;
       setCurrentPiece(newPiece);
     }
   }
 
-  const EMPTY_ROW: PieceType[] = [
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-    PieceType.None,
-  ];
+  const EMPTY_ROW: PieceType[] = ["", "", "", "", "", "", "", "", "", ""];
 
   function onHandlePlacePiece(): void {
     const placePieceLocation: [number, number] = getPathFindPiece(
@@ -723,13 +705,13 @@ const Tetris = ({
     popPiece();
 
     if (
-      (queue.length == 0 || queue[0] == PieceType.None) &&
-      currentHeldPiece.pieceType == PieceType.None
+      (queue.length == 0 || queue[0] == "") &&
+      currentHeldPiece.pieceType == ""
     ) {
       if (onGameEnd) onGameEnd(newBoard, points);
       setGameOver(true);
       const newPiece: TetrisPiece = {
-        pieceType: queue[0] ?? PieceType.None,
+        pieceType: queue[0] ?? "",
         pieceLocation: [0, 0],
         pieceRotation: 0,
         isSlamKicked: false,
@@ -747,7 +729,7 @@ const Tetris = ({
     if (
       !isPieceMoveValidWithRotationAndPieceType(
         nextStartingLocation,
-        Rotation.Zero,
+        0,
         queue[0]!,
         newBoard
       ) ||
@@ -758,12 +740,13 @@ const Tetris = ({
       return;
     }
 
-    const newPiece = {
-      pieceType: queue[0] ?? PieceType.None,
+    const newPiece: TetrisPiece = {
+      pieceType: queue[0] ?? "",
       pieceLocation: nextStartingLocation,
       pieceRotation: 0,
       isSlamKicked: false,
     };
+
     currentPieceRef.current = newPiece;
     setCurrentPiece(newPiece);
   }
@@ -827,6 +810,45 @@ const Tetris = ({
 
   const tileDimensions = { height: 20, width: 20 };
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const clearBoard = (ctx: CanvasRenderingContext2D) => {
+    ctx.clearRect(0, 0, 200, 460);
+  };
+
+  const drawCurrentPiece = BoardPiece({
+    location: currentPiece.pieceLocation,
+    tileDimensions: tileDimensions,
+    pieceType: currentPiece.pieceType,
+    rotation: currentPiece.pieceRotation,
+  });
+
+  const drawShadowPiece = BoardPiece({
+    location: shadowPieceLocation,
+    tileDimensions: tileDimensions,
+    isShadowPiece: true,
+    pieceType: currentPiece.pieceType,
+    rotation: currentPiece.pieceRotation,
+  });
+
+  const drawBoard = Board({
+    width: (width / 10) as number,
+    height: (height / 20) as number,
+    boardState: board,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const context = canvas.getContext("2d");
+
+    if (context) {
+      clearBoard(context);
+      drawBoard(context);
+      drawShadowPiece(context);
+      drawCurrentPiece(context);
+    }
+  }, [drawCurrentPiece]);
+
   return (
     <KeyListener
       gameOver={gameOver}
@@ -844,32 +866,16 @@ const Tetris = ({
       settings={settings}
     >
       <div className="mt-20 flex">
-        <div className=" flex w-20 justify-center">
-          <Piece
-            location={[0, 1]}
+        <div className="mt-20 w-20">
+          <HoldPiece
             tileDimensions={{ width: 15, height: 15 }}
-            texture={getTextureFromBoardStateTile(currentHeldPiece.pieceType)}
             pieceType={currentHeldPiece.pieceType}
             rotation={0}
           />
         </div>
 
-        <div>
-          <Piece
-            location={shadowPieceLocation}
-            tileDimensions={tileDimensions}
-            texture={ShadowPiece}
-            pieceType={currentPiece.pieceType}
-            rotation={currentPiece.pieceRotation}
-          />
-          <Piece
-            location={currentPiece.pieceLocation}
-            tileDimensions={tileDimensions}
-            texture={getTextureFromBoardStateTile(currentPiece.pieceType)}
-            pieceType={currentPiece.pieceType}
-            rotation={currentPiece.pieceRotation}
-          />
-          <Board width={width} height={height} boardState={board}>
+        <div className="relative">
+          <div className="absolute top-[35%] left-0 w-full bg-gray-400/95">
             {children}
             <EndGame
               onGameReset={onResetHandler}
@@ -878,9 +884,10 @@ const Tetris = ({
               isWin={isWin}
               gameOver={gameOver}
             />
-          </Board>
+          </div>
+          <canvas width={200} height={460} ref={canvasRef}></canvas>
         </div>
-        <div className="flex flex-col">
+        <div className="mt-10">
           <PieceQueue queue={queue} />
           <FontAwesomeIcon
             className="border-1 mb-0 mt-auto border-red-500 hover:cursor-pointer"

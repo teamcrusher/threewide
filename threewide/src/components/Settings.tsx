@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Moves } from "src/types/tetris";
+import type { Moves } from "src/types/tetris";
 
 export type SettingsProperties = {
   showSettings: boolean;
@@ -108,6 +108,8 @@ const SettingsPage = ({
         }
       }}
       onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setChangingSetting(undefined);
       }}
       className="absolute left-0 top-0 flex h-[100vh] w-[100vw] items-center justify-center"

@@ -5,7 +5,7 @@ import React, {
   useRef,
 } from "react";
 import { useState } from "react";
-import { Moves } from "src/types/tetris";
+import { Moves, Rotation } from "src/types/tetris";
 import { Settings } from "./Settings";
 
 type Direction = "left" | "right" | null;
@@ -19,7 +19,7 @@ type KeyListenerEventHandlers = {
   onHardDropHandler: () => void;
   onHoldPieceHandler: () => void;
   onSoftDropHandler: () => void;
-  onRotatePieceHandler: (rotation: number) => void;
+  onRotatePieceHandler: (rotation: Rotation) => void;
   onResetHandler: () => void;
   onNextGame?: () => void;
   onPreviousGame?: () => void;

@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { Goal } from "src/models/game_description.model";
-import internal from "stream";
+import React from "react";
+import type { ReactNode } from "react";
+import type { Goal } from "src/models/game_description.model";
 
 type GoalProperties = {
   goal: Goal;
